@@ -165,7 +165,7 @@
 </head>
 <body class="h-screen py-0 sm:py-6 md:py-8 px-0 sm:px-4 flex flex-col items-center justify-center bg-[#DFDFE3] overflow-hidden">
 
-    <div id="app" class="w-full max-w-md mx-auto flex flex-col items-center h-full sm:h-auto">
+    <div id="app" class="w-full h-full max-w-md mx-auto flex flex-col items-center sm:h-auto">
 
         <!-- APP CONTAINER (Fixed mobile frame layout with smooth internal scrolling) -->
         <div class="w-full max-w-[430px] sm:rounded-[48px] h-full sm:h-[840px] bg-[#f4f4f7] sm:border-[8px] sm:border-slate-800 shadow-2xl flex flex-col overflow-hidden relative transition-all duration-300">
@@ -207,11 +207,11 @@
 
 
             <!-- MAIN SCROLLABLE BODY AREA -->
-            <main class="flex-grow p-4 sm:p-5 overflow-y-auto relative space-y-4">
+            <main class="flex-grow p-4 sm:p-5 overflow-y-auto relative space-y-4 pb-12 sm:pb-5">
 
                 <!-- ================= STEP 0: LANDING & PROPERTY TYPE SELECTION ================= -->
                 <transition name="fade-slide" mode="out-in">
-                    <div v-if="currentStep === 0" class="space-y-4 pt-1">
+                    <div v-if="currentStep === 0" class="space-y-4 pt-1 pb-8">
                         
                         <!-- Welcome Header Card -->
                         <div class="bg-white p-6 squircle-card text-center space-y-3.5 border border-slate-100/80">
@@ -280,8 +280,8 @@
                             </div>
                         </div>
 
-                        <!-- CTA Button -->
-                        <div class="pt-2">
+                        <!-- CTA Button with extra bottom margin for mobile safe area -->
+                        <div class="pt-2 pb-6">
                             <button @click="startBrief" 
                                     :disabled="!form.property_type"
                                     :class="form.property_type ? 'bg-navy-900 text-white hover:bg-navy-950 shadow-lg active:scale-95' : 'bg-slate-200 text-slate-400 cursor-not-allowed'"
@@ -430,45 +430,45 @@
                                 <p class="text-[10px] text-slate-400">Harap isi seluruh field bertanda (<span class="text-red-500">*</span>).</p>
                             </div>
 
-                            <!-- Land & Building Area Grid -->
+                            <!-- Land & Building Area Grid (Strict Number Inputs) -->
                             <div class="grid grid-cols-2 gap-2.5">
                                 <div>
                                     <label class="block text-[11px] font-bold text-navy-900 mb-1">
                                         Luas Tanah (m²) <span class="text-red-500">*</span>
                                     </label>
-                                    <input type="number" v-model.number="form.land_area" placeholder="120"
+                                    <input type="number" inputmode="numeric" pattern="[0-9]*" v-model.number="form.land_area" placeholder="120"
                                            class="w-full p-2.5 rounded-xl text-xs font-semibold text-slate-900 gdp-input">
                                 </div>
                                 <div>
                                     <label class="block text-[11px] font-bold text-navy-900 mb-1">
                                         Luas Bangunan (m²) <span class="text-red-500">*</span>
                                     </label>
-                                    <input type="number" v-model.number="form.building_area" placeholder="90"
+                                    <input type="number" inputmode="numeric" pattern="[0-9]*" v-model.number="form.building_area" placeholder="90"
                                            class="w-full p-2.5 rounded-xl text-xs font-semibold text-slate-900 gdp-input">
                                 </div>
                             </div>
 
-                            <!-- Kamar Tidur, Kamar Mandi, Jumlah Lantai Grid -->
+                            <!-- Kamar Tidur, Kamar Mandi, Jumlah Lantai Grid (Strict Number Inputs) -->
                             <div class="grid grid-cols-3 gap-2">
                                 <div>
                                     <label class="block text-[10px] font-bold text-navy-900 mb-1">
                                         Kamar Tidur <span class="text-red-500">*</span>
                                     </label>
-                                    <input type="number" v-model.number="form.bedrooms" min="0" placeholder="3"
+                                    <input type="number" inputmode="numeric" pattern="[0-9]*" v-model.number="form.bedrooms" min="0" placeholder="3"
                                            class="w-full p-2 rounded-xl text-xs font-semibold text-slate-900 text-center gdp-input">
                                 </div>
                                 <div>
                                     <label class="block text-[10px] font-bold text-navy-900 mb-1">
                                         Kamar Mandi <span class="text-red-500">*</span>
                                     </label>
-                                    <input type="number" v-model.number="form.bathrooms" min="0" placeholder="2"
+                                    <input type="number" inputmode="numeric" pattern="[0-9]*" v-model.number="form.bathrooms" min="0" placeholder="2"
                                            class="w-full p-2 rounded-xl text-xs font-semibold text-slate-900 text-center gdp-input">
                                 </div>
                                 <div>
                                     <label class="block text-[10px] font-bold text-navy-900 mb-1">
                                         Jumlah Lantai <span class="text-red-500">*</span>
                                     </label>
-                                    <input type="number" v-model.number="form.floors" min="1" placeholder="1"
+                                    <input type="number" inputmode="numeric" pattern="[0-9]*" v-model.number="form.floors" min="1" placeholder="1"
                                            class="w-full p-2 rounded-xl text-xs font-semibold text-slate-900 text-center gdp-input">
                                 </div>
                             </div>
@@ -486,7 +486,7 @@
                                         {{ opt }}
                                     </button>
                                 </div>
-                                <input v-if="form.carport_garage === 'Lainnya'" type="text" v-model="form.custom_carport" placeholder="Ketik kapasitas mobil"
+                                <input v-if="form.carport_garage === 'Lainnya'" type="number" inputmode="numeric" pattern="[0-9]*" v-model.number="form.custom_carport" placeholder="Ketik kapasitas mobil (angka)"
                                        class="w-full p-2.5 mt-2 rounded-xl text-xs font-semibold text-slate-900 gdp-input">
                             </div>
 
@@ -512,13 +512,13 @@
                                        class="w-full p-2.5 rounded-xl text-xs font-semibold text-slate-900 gdp-input">
                             </div>
 
-                            <!-- Electricity & Water -->
+                            <!-- Electricity & Water (Strict Number for Electricity) -->
                             <div class="grid grid-cols-2 gap-2.5">
                                 <div>
                                     <label class="block text-[11px] font-bold text-navy-900 mb-1">
-                                        Daya Listrik <span class="text-red-500">*</span>
+                                        Daya Listrik (VA) <span class="text-red-500">*</span>
                                     </label>
-                                    <input type="text" v-model="form.electricity" placeholder="e.g. 1300 VA / 2200 VA"
+                                    <input type="number" inputmode="numeric" pattern="[0-9]*" v-model.number="form.electricity" placeholder="e.g. 1300 / 2200"
                                            class="w-full p-2.5 rounded-xl text-xs font-semibold text-slate-900 gdp-input">
                                 </div>
                                 <div>
@@ -851,14 +851,14 @@
                                 </div>
                             </div>
 
-                            <!-- Price Input in Rupiah -->
+                            <!-- Price Input in Rupiah (Numeric Input Only) -->
                             <div>
                                 <label class="block text-xs font-bold text-navy-900 mb-1">
                                     Harga Penawaran <span class="text-red-500">*</span>
                                 </label>
                                 <div class="relative">
                                     <span class="absolute left-3.5 top-2.5 text-xs font-extrabold text-navy-900">Rp</span>
-                                    <input type="text" :value="formattedPrice" @input="onPriceInput" placeholder="1.250.000.000"
+                                    <input type="text" inputmode="numeric" pattern="[0-9]*" :value="formattedPrice" @input="onPriceInput" placeholder="1250000000"
                                            class="w-full pl-10 pr-3.5 py-2.5 rounded-xl text-xs font-extrabold text-navy-900 gdp-input">
                                 </div>
                                 <p v-if="form.price > 0" class="text-[10px] text-emerald-700 font-bold mt-1">
@@ -867,30 +867,13 @@
                                 <p v-if="errors.price" class="text-[10px] text-red-500 mt-1 font-semibold">{{ errors.price }}</p>
                             </div>
 
-                            <!-- Price Unit (Land only) -->
-                            <div v-if="form.property_type === 'Tanah'">
-                                <label class="block text-xs font-bold text-navy-900 mb-1.5">Satuan Harga</label>
-                                <div class="grid grid-cols-2 gap-2">
-                                    <button type="button" @click="form.price_unit = 'Harga Total'" 
-                                            :class="form.price_unit === 'Harga Total' ? 'pill-btn-active' : 'bg-slate-100 text-slate-700 border-slate-200'"
-                                            class="py-2 px-2 rounded-xl border text-xs font-bold">
-                                        Harga Total
-                                    </button>
-                                    <button type="button" @click="form.price_unit = 'Per Meter Square'" 
-                                            :class="form.price_unit === 'Per Meter Square' ? 'pill-btn-active' : 'bg-slate-100 text-slate-700 border-slate-200'"
-                                            class="py-2 px-2 rounded-xl border text-xs font-bold">
-                                        Harga / m²
-                                    </button>
-                                </div>
-                            </div>
-
                             <!-- Komisi Fee untuk GDP -->
                             <div>
                                 <label class="block text-xs font-bold text-navy-900 mb-1">
                                     Komisi Fee Jika Terjual melalui GDP (%) <span class="text-red-500">*</span>
                                 </label>
                                 <div class="relative flex items-center">
-                                    <input type="number" v-model.number="form.commission_fee" min="2.5" step="0.1" placeholder="2.5"
+                                    <input type="number" inputmode="decimal" v-model.number="form.commission_fee" min="2.5" step="0.1" placeholder="2.5"
                                            class="w-full px-3.5 py-2.5 rounded-xl text-xs font-extrabold text-navy-900 gdp-input pr-12">
                                     <span class="absolute right-3.5 text-xs font-extrabold text-slate-500">%</span>
                                 </div>
@@ -921,7 +904,7 @@
 
                         <button @click="nextStep" class="w-full py-3.5 bg-navy-900 text-white rounded-full font-extrabold text-xs tracking-wide shadow-ios-btn hover:bg-navy-950 transition flex items-center justify-center gap-2">
                             <span>Tinjau Ringkasan Brief</span>
-                            <i class="fa-solid fa-check-double text-[10px]"></i>
+<i class="fa-solid fa-arrow-right text-[10px]"></i>
                         </button>
                     </div>
                 </transition>
@@ -931,33 +914,24 @@
                 <transition name="fade-slide" mode="out-in">
                     <div v-if="currentStep === 6" class="space-y-4">
                         <div id="printable-brief" class="bg-white p-5 squircle-card border border-slate-100 shadow-soft-elevation space-y-3.5 text-xs">
-                            <div class="border-b border-slate-100 pb-2.5 flex justify-between items-center gap-2">
+                            <!-- Header Info & Ownership Status -->
+                            <div class="border-b border-slate-100 pb-2.5 flex justify-between items-start gap-2">
                                 <div>
                                     <span class="text-[9px] bg-emerald-100 text-emerald-800 font-extrabold px-2.5 py-0.5 rounded-full uppercase">Review Brief</span>
                                     <h2 class="text-base font-extrabold text-navy-900 mt-1">Ringkasan Brief Properti</h2>
                                 </div>
-                                <div class="flex items-center gap-2">
-                                    <!-- PDF Export Button -->
-                                    <button @click="printBriefPDF" title="Cetak / Simpan PDF" class="px-2.5 py-1.5 bg-red-50 text-red-600 hover:bg-red-100 rounded-xl text-xs font-extrabold flex items-center gap-1 border border-red-200 transition no-print active:scale-95">
-                                        <i class="fa-solid fa-file-pdf text-sm"></i>
-                                        <span>PDF</span>
-                                    </button>
+                                
+                                <!-- PDF & Label Container Stacked nicely on the Right -->
+                                <div class="flex flex-col items-end gap-1.5">
                                     <span class="px-2.5 py-1 bg-navy-900 text-dutch-orange font-extrabold rounded-full text-[10px] truncate max-w-[120px]">
                                         {{ form.property_type }} / {{ form.property_subcategory || 'Umum' }}
                                     </span>
-                                </div>
-                            </div>
-
-                            <!-- Header Info & Ownership Status -->
-                            <div class="bg-slate-50 p-3 rounded-2xl border border-slate-100 space-y-1">
-                                <div class="font-extrabold text-navy-900 text-xs">{{ form.customer_name || 'Nama Belum Diisi' }}</div>
-                                <div class="text-[10px] text-slate-500 font-medium">No. WhatsApp: <span class="text-slate-800 font-bold">{{ form.whatsapp || '-' }}</span></div>
-                                <div class="text-[10px] text-slate-500 font-medium">
-                                    Kepemilikan: 
-                                    <span class="text-navy-900 font-bold">{{ form.is_owner_name }}</span>
-                                    <span v-if="form.is_owner_name === 'Bukan Atas Nama Saya' && form.owner_name">
-                                        ({{ form.owner_name }} - {{ form.owner_status }})
-                                    </span>
+                                    
+                                    <!-- PDF Export Button -->
+                                    <button @click="printBriefPDF" title="Cetak / Simpan PDF Brief" class="px-3 py-1.5 bg-red-50 text-red-600 hover:bg-red-100 rounded-xl text-xs font-extrabold flex items-center gap-1.5 border border-red-200 transition no-print active:scale-95 shadow-sm">
+                                        <i class="fa-solid fa-file-pdf text-sm"></i>
+                                        <span>Unduh</span>
+                                    </button>
                                 </div>
                             </div>
 
@@ -1026,8 +1000,8 @@
                 <transition name="fade-slide" mode="out-in">
                     <div v-if="currentStep === 7" class="space-y-4">
                         <div class="bg-white p-5 squircle-card border border-navy-900/20 shadow-lg space-y-4">
-                            <div class="text-center pb-2 border-b border-slate-100">
-                                <div class="w-12 h-12 rounded-2xl bg-navy-900 text-gold-400 mx-auto flex items-center justify-center text-lg mb-2 shadow-md">
+                            <div class="text-center pb-2 border-b border-slate-100 flex flex-col items-center">
+                                <div class="w-12 h-12 rounded-2xl bg-navy-900 text-gold-400 flex items-center justify-center text-lg mb-2 shadow-md">
                                     <i class="fa-solid fa-scale-balanced"></i>
                                 </div>
                                 <span class="text-[9px] font-extrabold bg-gold-400/20 text-navy-900 px-2.5 py-0.5 rounded-full uppercase tracking-wider">Perjanjian Resmi</span>
@@ -1035,51 +1009,66 @@
                                 <p class="text-[10px] text-slate-400 font-semibold">Guntur Dagang Property & Pemilik Properti</p>
                             </div>
 
-                            <!-- MOU Clauses -->
-                            <div class="space-y-3 text-[10.5px] text-slate-700 leading-relaxed max-h-[280px] overflow-y-auto pr-1">
-                                
-                                <div class="p-3 bg-slate-50 rounded-2xl border border-slate-200/80 space-y-1">
-                                    <strong class="text-navy-900 font-bold block flex items-center gap-1.5">
-                                        <i class="fa-solid fa-handshake text-gold-600"></i> Pasal 1: Ketentuan Komisi 2.5%
-                                    </strong>
-                                    <p class="text-slate-600 text-[10px]">
-                                        Pemilik properti menyetujui kewajiban pembayaran komisi sebesar <strong class="text-navy-900">2,5% (dua koma lima persen)</strong> dari total nilai transaksi jual/sewa apabila properti berhasil dipasarkan dan laku melalui perantara/mediasi <strong>Guntur Dagang Property (GDP)</strong>, dalam kondisi transaksi apapun.
-                                    </p>
+                            <!-- MOU Clauses with Bigger Legible Font & Centered Scroll Indicator Icon -->
+                            <div class="relative pb-3">
+                                <div class="space-y-3 text-xs text-slate-700 leading-relaxed max-h-[320px] overflow-y-auto pr-1">
+                                    
+                                    <div class="p-3.5 bg-slate-50 rounded-2xl border border-slate-200/80 space-y-1.5">
+                                        <strong class="text-navy-900 font-bold block flex items-center gap-1.5 text-xs">
+                                            <i class="fa-solid fa-handshake text-gold-600"></i> Pasal 1: Ketentuan Komisi 2.5%
+                                        </strong>
+                                        <p class="text-slate-600 text-xs">
+                                            Pemilik properti menyetujui kewajiban pembayaran komisi sebesar <strong class="text-navy-900 font-bold">2,5% (dua koma lima persen)</strong> dari total nilai transaksi jual/sewa apabila properti berhasil dipasarkan dan laku melalui perantara/mediasi <strong>Guntur Dagang Property (GDP)</strong>, dalam kondisi transaksi apapun.
+                                        </p>
+                                    </div>
+
+                                    <div class="p-3.5 bg-slate-50 rounded-2xl border border-slate-200/80 space-y-1.5">
+                                        <strong class="text-navy-900 font-bold block flex items-center gap-1.5 text-xs">
+                                            <i class="fa-solid fa-user-shield text-gold-600"></i> Pasal 2: Hak Perantara & Transparansi
+                                        </strong>
+                                        <p class="text-slate-600 text-xs">
+                                            GDP bertindak sebagai mediator resmi antara pembeli dan penjual. GDP berhak mengetahui seluruh tahapan komunikasi, kesepakatan, serta detail transaksi yang berkaitan dengan properti ini guna memastikan perlindungan hak kedua belah pihak.
+                                        </p>
+                                    </div>
+
+                                    <div class="p-3.5 bg-slate-50 rounded-2xl border border-slate-200/80 space-y-1.5">
+                                        <strong class="text-navy-900 font-bold block flex items-center gap-1.5 text-xs">
+                                            <i class="fa-solid fa-money-bill-transfer text-gold-600"></i> Pasal 3: Pencairan Komisi (DP & Bertahap)
+                                        </strong>
+                                        <p class="text-slate-600 text-xs">
+                                            Hak komisi GDP <strong class="text-navy-900 font-bold">tidak harus menunggu pembayaran lunas</strong> dari pembeli. GDP berhak menerima hak bagian komisi secara proporsional sejak pembeli melakukan pembayaran Uang Muka (DP) atau skema pembayaran bertahap pertama.
+                                        </p>
+                                    </div>
+
+                                    <div class="p-3.5 bg-slate-50 rounded-2xl border border-slate-200/80 space-y-1.5">
+                                        <strong class="text-navy-900 font-bold block flex items-center gap-1.5 text-xs">
+                                            <i class="fa-solid fa-award text-gold-600"></i> Pasal 4: Positioning Legalitas GDP
+                                        </strong>
+                                        <p class="text-slate-600 text-xs">
+                                            GDP adalah Lembaga Pemasaran Digital Properti Resmi terpublikasi. Kesepakatan ini mengikat secara hukum dan memberikan hak penuh bagi GDP untuk mengelola serta mempromosikan media iklan properti ini.
+                                        </p>
+                                    </div>
+
                                 </div>
 
-                                <div class="p-3 bg-slate-50 rounded-2xl border border-slate-200/80 space-y-1">
-                                    <strong class="text-navy-900 font-bold block flex items-center gap-1.5">
-                                        <i class="fa-solid fa-user-shield text-gold-600"></i> Pasal 2: Hak Perantara & Transparansi
-                                    </strong>
-                                    <p class="text-slate-600 text-[10px]">
-                                        GDP bertindak sebagai mediator resmi antara pembeli dan penjual. GDP berhak mengetahui seluruh tahapan komunikasi, kesepakatan, serta detail transaksi yang berkaitan dengan properti ini guna memastikan perlindungan hak kedua belah pihak.
-                                    </p>
+                                <!-- Centered Scroll Indicator Badge placed right at the bottom edge between scroll area and PDF button -->
+                                <div class="absolute -bottom-1 left-1/2 -translate-x-1/2 pointer-events-none bg-navy-900 text-gold-400 w-7 h-7 rounded-full flex items-center justify-center shadow-md border border-white z-10">
+                                    <i class="fa-solid fa-chevron-down text-xs"></i>
                                 </div>
+                            </div>
 
-                                <div class="p-3 bg-slate-50 rounded-2xl border border-slate-200/80 space-y-1">
-                                    <strong class="text-navy-900 font-bold block flex items-center gap-1.5">
-                                        <i class="fa-solid fa-money-bill-transfer text-gold-600"></i> Pasal 3: Pencairan Komisi (DP & Bertahap)
-                                    </strong>
-                                    <p class="text-slate-600 text-[10px]">
-                                        Hak komisi GDP <strong class="text-navy-900">tidak harus menunggu pembayaran lunas</strong> dari pembeli. GDP berhak menerima hak bagian komisi secara proporsional sejak pembeli melakukan pembayaran Uang Muka (DP) atau skema pembayaran bertahap pertama.
-                                    </p>
-                                </div>
-
-                                <div class="p-3 bg-slate-50 rounded-2xl border border-slate-200/80 space-y-1">
-                                    <strong class="text-navy-900 font-bold block flex items-center gap-1.5">
-                                        <i class="fa-solid fa-award text-gold-600"></i> Pasal 4: Positioning Legalitas GDP
-                                    </strong>
-                                    <p class="text-slate-600 text-[10px]">
-                                        GDP adalah Lembaga Pemasaran Digital Properti Resmi terpublikasi. Kesepakatan ini mengikat secara hukum dan memberikan hak penuh bagi GDP untuk mengelola serta mempromosikan media iklan properti ini.
-                                    </p>
-                                </div>
-
+                            <!-- MOU PDF Download Button in Dutch Orange Brand Color -->
+                            <div class="pt-2 flex justify-center">
+                                <button @click="printBriefPDF" class="w-full py-2.5 bg-dutch-orange hover:bg-gold-600 text-white text-xs font-extrabold rounded-xl flex items-center justify-center gap-2 transition active:scale-95 shadow-md">
+                                    <i class="fa-solid fa-file-pdf text-sm"></i>
+                                    <span>Unduh / Cetak Dokumen MOU (PDF)</span>
+                                </button>
                             </div>
 
                             <!-- Consent Checkbox -->
-                            <div class="bg-navy-900/5 p-3 rounded-2xl border border-navy-900/10 flex items-start gap-2.5">
+                            <div class="bg-navy-900/5 p-3.5 rounded-2xl border border-navy-900/10 flex items-start gap-2.5">
                                 <input type="checkbox" id="mouConsent" v-model="formConsent" class="w-4 h-4 mt-0.5 accent-navy-900 rounded cursor-pointer">
-                                <label for="mouConsent" class="text-[10px] font-bold text-navy-900 cursor-pointer leading-tight">
+                                <label for="mouConsent" class="text-[11px] font-bold text-navy-900 cursor-pointer leading-snug">
                                     Saya membaca, memahami, dan menyetujui seluruh ketentuan MOU Komisi 2,5% serta menunjuk Guntur Dagang Property sebagai mediator resmi.
                                 </label>
                             </div>
@@ -1092,8 +1081,7 @@
                                     :class="formConsent && !isSubmitting ? 'bg-navy-900 text-white hover:bg-navy-950 shadow-ios-btn' : 'bg-slate-300 text-slate-500 cursor-not-allowed'"
                                     class="w-full py-4 rounded-full font-extrabold text-xs tracking-wide transition flex items-center justify-center gap-2">
                                 <i v-if="isSubmitting" class="fa-solid fa-spinner fa-spin text-xs"></i>
-                                <i v-else class="fa-paper-plane text-xs"></i>
-                                <span>{{ isSubmitting ? 'Mengirim Data...' : 'Setujui MOU & Kirim Data Properti' }}</span>
+<span>{{ isSubmitting ? 'Mengirim Data...' : 'Setuju & Kirim Data Properti' }}</span>
                             </button>
 
                             <button @click="currentStep = 6" class="w-full py-2 text-xs font-bold text-slate-500 hover:text-navy-900 transition">
@@ -1104,11 +1092,11 @@
                 </transition>
 
 
-                <!-- ================= STEP 8: HALAMAN BERHASIL ================= -->
+                <!-- ================= STEP 8: HALAMAN BERHASIL (PERFECTLY CENTERED) ================= -->
                 <transition name="fade-slide" mode="out-in">
-                    <div v-if="currentStep === 8" class="text-center py-6 space-y-4">
+                    <div v-if="currentStep === 8" class="h-full min-h-[500px] flex flex-col items-center justify-center text-center my-auto py-6 space-y-4">
                         
-                        <div class="w-16 h-16 rounded-3xl bg-emerald-100 text-emerald-600 mx-auto flex items-center justify-center text-2xl shadow-lg shadow-emerald-500/20">
+                        <div class="w-16 h-16 rounded-3xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-2xl shadow-lg shadow-emerald-500/20">
                             <i class="fa-solid fa-check"></i>
                         </div>
 
@@ -1122,7 +1110,7 @@
                         </div>
 
                         <!-- ID Badge Card -->
-                        <div class="bg-white border border-slate-200 p-4 squircle-card max-w-xs mx-auto text-left text-xs space-y-1.5 shadow-sm">
+                        <div class="bg-white border border-slate-200 p-4 squircle-card max-w-xs w-full text-left text-xs space-y-1.5 shadow-sm">
                             <div class="flex justify-between text-slate-500 text-[10px]">
                                 <span>ID Pengajuan:</span>
                                 <span class="font-mono font-bold text-navy-900">{{ lastSubmissionId }}</span>
@@ -1133,7 +1121,7 @@
                             </div>
                         </div>
 
-                        <div class="space-y-2.5 pt-2 max-w-xs mx-auto">
+                        <div class="space-y-2.5 pt-2 max-w-xs w-full">
                             <!-- Tombol Konfirmasi WhatsApp -->
                             <a :href="whatsappConfirmUrl" target="_blank" rel="noopener" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full font-extrabold text-xs tracking-wide shadow-lg transition flex items-center justify-center gap-2 active:scale-95 border border-emerald-500">
                                 <i class="fa-brands fa-whatsapp text-sm"></i>
@@ -1261,10 +1249,10 @@
                     bathrooms: null,
                     floors: null,
                     carport_garage: '1',
-                    custom_carport: '',
+                    custom_carport: null,
                     furnishing: 'Unfurnished',
                     facilities: '',
-                    electricity: '',
+                    electricity: null,
                     water_source: '',
                     
                     land_width: null,
@@ -1286,7 +1274,7 @@
                     development_potential: [],
 
                     transaction_types: ['Jual'],
-                    price: 0,
+                    price: null,
                     commission_fee: 2.5,
                     price_unit: 'Harga Total',
                     payment_scheme: 'Cash',
@@ -1388,8 +1376,8 @@
                                 showToast('Mohon pilih Kondisi Perabot', 'error');
                                 return false;
                             }
-                            if (!form.electricity || !form.electricity.trim()) {
-                                showToast('Mohon isi Daya Listrik', 'error');
+                            if (!form.electricity) {
+                                showToast('Mohon isi Daya Listrik (VA)', 'error');
                                 return false;
                             }
                             if (!form.water_source || !form.water_source.trim()) {
@@ -1501,8 +1489,11 @@
                 };
 
                 const onPriceInput = (event) => {
+                    // Strictly extract only digits and strip any text/characters
                     const rawValue = event.target.value.replace(/\D/g, '');
-                    form.price = rawValue ? parseInt(rawValue, 10) : 0;
+                    form.price = rawValue ? parseInt(rawValue, 10) : null;
+                    // Force input display to reflect stripped numeric value or formatted string
+                    event.target.value = formattedPrice.value;
                 };
 
                 const formattedPrice = computed(() => {
@@ -1540,18 +1531,91 @@
                     window.print();
                 };
 
-                const submitBrief = () => {
+                // ====== KONFIGURASI: tempel URL Web App Google Apps Script (berakhiran /exec) ======
+                const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxTuNMhKeQKCgOrB8qAQTMmOOtY9z1dVzXjK8QT1ptHHvKBada2nepNLE02cQHfMb14/exec';
+
+                const buildPayload = (id) => {
+                    const nearby = accessCategories.value
+                        .flatMap(cat => cat.items
+                            .filter(i => i.name && i.name.trim())
+                            .map(i => `${cat.title}: ${i.name.trim()} (${i.minutes || '?'} mnt)`))
+                        .join('; ');
+                    const isBangunan = form.property_type === 'Bangunan';
+                    const isTanah = form.property_type === 'Tanah';
+                    const isNotOwner = form.is_owner_name === 'Bukan Atas Nama Saya';
+
+                    return {
+                        submitted_at: new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }),
+                        submission_id: id,
+                        customer_name: form.customer_name.trim(),
+                        whatsapp: form.whatsapp.trim(),
+                        owner_type: form.is_owner_name,
+                        owner_name: isNotOwner ? form.owner_name.trim() : '',
+                        owner_status: isNotOwner ? form.owner_status : '',
+                        property_type: form.property_type,
+                        property_subcategory: form.property_subcategory,
+                        property_title: form.property_title,
+                        land_area: form.land_area,
+                        building_area: isBangunan ? form.building_area : '',
+                        bedrooms: isBangunan ? form.bedrooms : '',
+                        bathrooms: isBangunan ? form.bathrooms : '',
+                        floors: isBangunan ? form.floors : '',
+                        carport: isBangunan ? (form.carport_garage === 'Lainnya' ? form.custom_carport : form.carport_garage) : '',
+                        furnishing: isBangunan ? form.furnishing : '',
+                        facilities: isBangunan ? form.facilities : '',
+                        electricity_va: isBangunan ? form.electricity : '',
+                        water_source: isBangunan ? form.water_source : '',
+                        land_width: isTanah ? form.land_width : '',
+                        land_shape: isTanah ? form.land_shape : '',
+                        land_condition: isTanah ? form.land_condition : '',
+                        road_access_main: isTanah ? form.road_access : '',
+                        zoning: isTanah ? form.zoning : '',
+                        certificate: form.certificate,
+                        facing_direction: form.facing_direction,
+                        address: form.address,
+                        maps_url: form.maps_url,
+                        nearby_access: nearby,
+                        selling_point_1: form.selling_point_1,
+                        selling_point_2: form.selling_point_2,
+                        road_access_types: form.road_access_types.join(', '),
+                        development_potential: isTanah ? form.development_potential.join(', ') : '',
+                        transaction_types: form.transaction_types.join(' & '),
+                        price: form.price,
+                        commission_fee: form.commission_fee,
+                        payment_scheme: form.payment_scheme,
+                        price_notes: form.price_notes,
+                        mou_consent: 'Ya'
+                    };
+                };
+
+                const submitBrief = async () => {
                     if (!formConsent.value) {
                         showToast('Harap centang persetujuan MOU terlebih dahulu', 'error');
                         return;
                     }
+                    if (isSubmitting.value) return;
                     isSubmitting.value = true;
-                    setTimeout(() => {
-                        isSubmitting.value = false;
-                        lastSubmissionId.value = 'GDP-' + Math.floor(100000 + Math.random() * 900000);
+                    const id = 'GDP-' + Math.floor(100000 + Math.random() * 900000);
+
+                    try {
+                        const res = await fetch(APPS_SCRIPT_URL, {
+                            method: 'POST',
+                            // text/plain agar tidak kena CORS preflight di Apps Script
+                            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                            body: JSON.stringify(buildPayload(id))
+                        });
+                        const result = await res.json();
+                        if (!result.ok) throw new Error(result.error || 'Gagal menyimpan');
+
+                        lastSubmissionId.value = id;
                         currentStep.value = 8;
                         showToast('Formulir berhasil dikirim!', 'info');
-                    }, 1000);
+                    } catch (err) {
+                        console.error(err);
+                        showToast('Gagal mengirim data, periksa koneksi lalu coba lagi', 'error');
+                    } finally {
+                        isSubmitting.value = false;
+                    }
                 };
 
                 const resetForm = () => {
@@ -1569,10 +1633,10 @@
                     form.bathrooms = null;
                     form.floors = null;
                     form.carport_garage = '1';
-                    form.custom_carport = '';
+                    form.custom_carport = null;
                     form.furnishing = 'Unfurnished';
                     form.facilities = '';
-                    form.electricity = '';
+                    form.electricity = null;
                     form.water_source = '';
                     form.land_width = null;
                     form.land_shape = '';
@@ -1589,7 +1653,7 @@
                     form.road_access_types = [];
                     form.development_potential = [];
                     form.transaction_types = ['Jual'];
-                    form.price = 0;
+                    form.price = null;
                     form.commission_fee = 2.5;
                     form.price_unit = 'Harga Total';
                     form.payment_scheme = 'Cash';
