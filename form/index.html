@@ -1,0 +1,1636 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>GDP Property Video Brief - Prototype Model</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: {
+                            800: '#071D49',
+                            900: '#071D49',
+                            950: '#04102b',
+                        },
+                        gold: {
+                            400: '#FE5000',
+                            500: '#FE5000',
+                            600: '#d44300',
+                        },
+                        dutch: {
+                            orange: '#FE5000',
+                        },
+                        royal: {
+                            blue: '#071D49',
+                        },
+                        softbg: '#DFDFE3',
+                        cardbg: '#ffffff'
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', '-apple-system', 'BlinkMacSystemFont', 'Inter', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'soft-elevation': '0 12px 32px -4px rgba(0, 0, 0, 0.05), 0 4px 12px -2px rgba(0, 0, 0, 0.02)',
+                        'floating-card': '0 18px 40px -12px rgba(0, 0, 0, 0.08)',
+                        'gold-glow': '0 6px 24px -2px rgba(254, 80, 0, 0.35)',
+                        'ios-btn': '0 8px 24px -4px rgba(7, 29, 73, 0.25)'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Vue 3 CDN -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+    <!-- FontAwesome Icons CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #e2e4e8;
+            color: #0b1320;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f3;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 9999px;
+        }
+
+        /* Soft Minimalist iOS Squircle Cards & Interactive Touch States */
+        .squircle-card {
+            border-radius: 28px;
+            background-color: #ffffff;
+            box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.04), 0 2px 8px -2px rgba(0, 0, 0, 0.02);
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .squircle-card-interactive {
+            border-radius: 28px;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .squircle-card-interactive:active {
+            transform: scale(0.97);
+        }
+
+        /* Input Styling */
+        .gdp-input {
+            transition: all 0.2s ease-in-out;
+            border: 1.5px solid #e2e8f0;
+            background-color: #f8fafc;
+            border-radius: 16px;
+        }
+        .gdp-input:focus {
+            background-color: #ffffff;
+            border-color: #0b1320;
+            box-shadow: 0 0 0 4px rgba(11, 19, 32, 0.06);
+            outline: none;
+        }
+
+        /* Active Button States */
+        .pill-btn-active {
+            background-color: #0b1320;
+            color: #ffffff;
+            border-color: #0b1320;
+            box-shadow: 0 4px 14px rgba(11, 19, 32, 0.18);
+        }
+
+        /* Dynamic Transitions */
+        .fade-slide-enter-active, .fade-slide-leave-active {
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .fade-slide-enter-from {
+            opacity: 0;
+            transform: translateY(12px) scale(0.99);
+        }
+        .fade-slide-leave-to {
+            opacity: 0;
+            transform: translateY(-12px) scale(0.99);
+        }
+
+        /* Toast Animation */
+        .toast-enter-active, .toast-leave-active {
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .toast-enter-from, .toast-leave-to {
+            opacity: 0;
+            transform: translate(-50%, -20px) scale(0.9);
+        }
+
+        /* Printable PDF Styling */
+        @media print {
+            body {
+                background: white !important;
+                color: black !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            .no-print, header, .toast-enter-active, button {
+                display: none !important;
+            }
+            #app, main {
+                width: 100% !important;
+                max-width: 100% !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                overflow: visible !important;
+            }
+            .squircle-card {
+                box-shadow: none !important;
+                border: 1px solid #cbd5e1 !important;
+                border-radius: 12px !important;
+            }
+        }
+    </style>
+</head>
+<body class="h-screen py-0 sm:py-6 md:py-8 px-0 sm:px-4 flex flex-col items-center justify-center bg-[#DFDFE3] overflow-hidden">
+
+    <div id="app" class="w-full max-w-md mx-auto flex flex-col items-center h-full sm:h-auto">
+
+        <!-- APP CONTAINER (Fixed mobile frame layout with smooth internal scrolling) -->
+        <div class="w-full max-w-[430px] sm:rounded-[48px] h-full sm:h-[840px] bg-[#f4f4f7] sm:border-[8px] sm:border-slate-800 shadow-2xl flex flex-col overflow-hidden relative transition-all duration-300">
+
+            <!-- CLEAN APP HEADER (ONLY SHOWS ON STEP 0 / LANDING PAGE) -->
+            <header v-if="currentStep === 0" class="bg-[#f4f4f7] px-6 pt-6 pb-4 flex items-center justify-between sticky top-0 z-30 border-b border-slate-200/50">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-navy-900 text-gold-400 flex items-center justify-center font-extrabold text-base shadow-md">
+                        <i class="fa-solid fa-play text-xs"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xs font-extrabold tracking-tight text-navy-900 uppercase">Guntur Dagang Property</h1>
+                        <p class="text-[10px] font-bold text-slate-400">Video Brief Digital Form</p>
+                    </div>
+                </div>
+            </header>
+
+            <!-- PROGRESS BAR INDICATOR (Active when step > 0 and step < 8) -->
+            <div v-if="currentStep > 0 && currentStep < 8" class="bg-[#f4f4f7] px-5 py-3 flex items-center justify-between gap-3 no-print border-b border-slate-200/60 sticky top-0 z-30">
+                <button @click="prevStep" class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-navy-900 hover:bg-slate-100 transition text-xs shadow-sm border border-slate-200/60 active:scale-95">
+                    <i class="fa-solid fa-chevron-left text-[10px]"></i>
+                </button>
+                
+                <div class="flex-grow max-w-[180px]">
+                    <div class="flex justify-between items-center text-[9px] font-extrabold text-slate-400 tracking-wider mb-1">
+                        <span>LANGKAH</span>
+                        <span class="text-navy-900">{{ currentStep }} / {{ totalSteps }}</span>
+                    </div>
+                    <div class="w-full bg-slate-200/80 h-1.5 rounded-full overflow-hidden">
+                        <div class="bg-navy-900 h-full transition-all duration-300 rounded-full"
+                             :style="{ width: (currentStep / totalSteps * 100) + '%' }"></div>
+                    </div>
+                </div>
+
+                <span class="text-[10px] font-bold text-navy-900 truncate max-w-[95px] bg-white border border-slate-200/60 px-2.5 py-1 rounded-full shadow-sm">
+                    {{ getStepTitle(currentStep) }}
+                </span>
+            </div>
+
+
+            <!-- MAIN SCROLLABLE BODY AREA -->
+            <main class="flex-grow p-4 sm:p-5 overflow-y-auto relative space-y-4">
+
+                <!-- ================= STEP 0: LANDING & PROPERTY TYPE SELECTION ================= -->
+                <transition name="fade-slide" mode="out-in">
+                    <div v-if="currentStep === 0" class="space-y-4 pt-1">
+                        
+                        <!-- Welcome Header Card -->
+                        <div class="bg-white p-6 squircle-card text-center space-y-3.5 border border-slate-100/80">
+                            <div class="w-14 h-14 rounded-3xl bg-slate-100 text-navy-900 mx-auto flex items-center justify-center text-2xl font-extrabold shadow-inner">
+                                <i class="fa-solid fa-clapperboard text-dutch-orange"></i>
+                            </div>
+                            <h2 class="text-lg font-extrabold text-navy-900 tracking-tight leading-snug">
+                                Isi Detail Properti Anda untuk Memudahkan Kami Membuat Video Iklan
+                            </h2>
+                            <p class="text-xs text-slate-500 leading-relaxed font-medium">
+                                Terima kasih sudah mempercayakan kebutuhan promosi properti kepada <strong class="text-navy-900">Guntur Dagang Property</strong>. Lengkapi informasi singkat tentang properti Anda agar tim kami bisa menyiapkan konsep video iklan yang tepat.
+                            </p>
+                        </div>
+
+                        <!-- Notes Card -->
+                        <div class="bg-white/80 p-4 squircle-card border border-slate-200/60 text-[11px] text-slate-600 space-y-2">
+                            <div class="flex items-center gap-2 font-bold text-navy-900">
+                                <i class="fa-solid fa-circle-info text-dutch-orange text-xs"></i>
+                                <span>Informasi Pengisian Brief:</span>
+                            </div>
+                            <ul class="space-y-1.5 pl-5 list-disc text-slate-500 leading-relaxed text-[10.5px]">
+                                <li>Waktu pengisian estimasi <strong class="text-slate-800">3–5 menit</strong>.</li>
+                                <li>Data yang belum diketahui boleh dikosongkan jika opsional.</li>
+                                <li>Google Maps dapat dilampirkan sebagai tautan.</li>
+                            </ul>
+                        </div>
+
+                        <!-- PROPERTY TYPE SELECTION (BANGUNAN vs TANAH) -->
+                        <div class="space-y-2.5 pt-1">
+                            <p class="text-xs font-extrabold uppercase text-navy-900 tracking-wider text-center">
+                                Pilih Jenis Properti Yang Akan Diiklankan
+                            </p>
+
+                            <div class="grid grid-cols-2 gap-3">
+                                <!-- Card Bangunan -->
+                                <div @click="selectPropertyType('Bangunan')" 
+                                     :class="form.property_type === 'Bangunan' ? 'border-navy-900 bg-white ring-2 ring-navy-900/10 shadow-md scale-[1.02]' : 'border-slate-200/80 bg-white hover:bg-slate-50'"
+                                     class="squircle-card-interactive p-4 cursor-pointer border text-center flex flex-col items-center justify-center gap-2 relative">
+                                    <div class="w-11 h-11 rounded-2xl bg-navy-900 text-dutch-orange flex items-center justify-center text-lg shadow-sm">
+                                        <i class="fa-solid fa-city"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-extrabold text-xs text-navy-900">Bangunan</h3>
+                                        <p class="text-[9px] text-slate-400 font-semibold leading-snug mt-0.5">Rumah, Villa, Ruko, Apartemen, Gudang, Hotel</p>
+                                    </div>
+                                    <span v-if="form.property_type === 'Bangunan'" class="absolute top-2.5 right-2.5 text-dutch-orange text-xs">
+                                        <i class="fa-solid fa-circle-check"></i>
+                                    </span>
+                                </div>
+
+                                <!-- Card Tanah -->
+                                <div @click="selectPropertyType('Tanah')" 
+                                     :class="form.property_type === 'Tanah' ? 'border-navy-900 bg-white ring-2 ring-navy-900/10 shadow-md scale-[1.02]' : 'border-slate-200/80 bg-white hover:bg-slate-50'"
+                                     class="squircle-card-interactive p-4 cursor-pointer border text-center flex flex-col items-center justify-center gap-2 relative">
+                                    <div class="w-11 h-11 rounded-2xl bg-dutch-orange text-white flex items-center justify-center text-lg shadow-sm">
+                                        <i class="fa-solid fa-map-location-dot"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-extrabold text-xs text-navy-900">Tanah</h3>
+                                        <p class="text-[9px] text-slate-400 font-semibold leading-snug mt-0.5">Kavling, Lahan, Sawah</p>
+                                    </div>
+                                    <span v-if="form.property_type === 'Tanah'" class="absolute top-2.5 right-2.5 text-dutch-orange text-xs">
+                                        <i class="fa-solid fa-circle-check"></i>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- CTA Button -->
+                        <div class="pt-2">
+                            <button @click="startBrief" 
+                                    :disabled="!form.property_type"
+                                    :class="form.property_type ? 'bg-navy-900 text-white hover:bg-navy-950 shadow-lg active:scale-95' : 'bg-slate-200 text-slate-400 cursor-not-allowed'"
+                                    class="w-full py-4 rounded-full font-extrabold text-xs tracking-wide transition flex items-center justify-center gap-2">
+                                <span>Mulai Isi Form Brief</span>
+                                <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                            </button>
+                        </div>
+
+                    </div>
+                </transition>
+
+
+                <!-- ================= STEP 1: INFORMASI CUSTOMER & SUBKATEGORI ================= -->
+                <transition name="fade-slide" mode="out-in">
+                    <div v-if="currentStep === 1" class="space-y-4">
+                        <div class="bg-white p-5 squircle-card border border-slate-100/80 space-y-4">
+                            <div>
+                                <span class="text-[9.5px] font-extrabold text-gold-600 uppercase tracking-wider bg-gold-400/10 px-2.5 py-0.5 rounded-full">Bagian 1</span>
+                                <h2 class="text-base font-extrabold text-navy-900 mt-1">Informasi Kontak & Jenis Properti</h2>
+                                <p class="text-xs text-slate-400">Data ini digunakan tim GDP untuk komunikasi awal.</p>
+                            </div>
+
+                            <!-- Customer Name -->
+                            <div>
+                                <label class="block text-xs font-bold text-navy-900 mb-1">
+                                    Nama Customer <span class="text-red-500">*</span>
+                                </label>
+                                <input type="text" v-model="form.customer_name" placeholder="Contoh: Budi Santoso"
+                                       class="w-full px-3.5 py-3 text-xs font-semibold text-slate-900 gdp-input">
+                                <p v-if="errors.customer_name" class="text-[10px] text-red-500 mt-1 font-semibold">{{ errors.customer_name }}</p>
+                            </div>
+
+                            <!-- WhatsApp Number -->
+                            <div>
+                                <label class="block text-xs font-bold text-navy-900 mb-1">
+                                    Nomor WhatsApp Aktif <span class="text-red-500">*</span>
+                                </label>
+                                <input type="tel" v-model="form.whatsapp" placeholder="Contoh: 081234567890"
+                                       class="w-full px-3.5 py-3 text-xs font-semibold text-slate-900 gdp-input">
+                                <p class="text-[9.5px] text-slate-400 mt-1">Format: 08xx atau +628xx</p>
+                                <p v-if="errors.whatsapp" class="text-[10px] text-red-500 mt-1 font-semibold">{{ errors.whatsapp }}</p>
+                            </div>
+
+                            <!-- Ownership Question (Atas Nama Saya / Bukan Atas Nama Saya) -->
+                            <div class="pt-1 border-t border-slate-100">
+                                <label class="block text-xs font-bold text-navy-900 mb-1.5">
+                                    Apakah Properti yang dijual atas nama kamu? <span class="text-red-500">*</span>
+                                </label>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <button type="button" @click="form.is_owner_name = 'Atas Nama Saya'" 
+                                            :class="form.is_owner_name === 'Atas Nama Saya' ? 'pill-btn-active' : 'bg-slate-100 text-slate-700 border-slate-200'"
+                                            class="py-2.5 px-2 rounded-xl border text-xs font-bold text-center">
+                                        Atas Nama Saya
+                                    </button>
+                                    <button type="button" @click="form.is_owner_name = 'Bukan Atas Nama Saya'" 
+                                            :class="form.is_owner_name === 'Bukan Atas Nama Saya' ? 'pill-btn-active' : 'bg-slate-100 text-slate-700 border-slate-200'"
+                                            class="py-2.5 px-2 rounded-xl border text-xs font-bold text-center">
+                                        Bukan Atas Nama Saya
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Dynamic Owner Information (when 'Bukan Atas Nama Saya') -->
+                            <div v-if="form.is_owner_name === 'Bukan Atas Nama Saya'" class="p-3.5 bg-slate-50 rounded-2xl border border-slate-200/80 space-y-3">
+                                <div>
+                                    <label class="block text-xs font-bold text-navy-900 mb-1">
+                                        Nama Pemilik Properti <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="text" v-model="form.owner_name" placeholder="Nama lengkap pemilik sesuai sertifikat"
+                                           class="w-full px-3.5 py-2.5 text-xs font-semibold text-slate-900 gdp-input">
+                                    <p v-if="errors.owner_name" class="text-[10px] text-red-500 mt-1 font-semibold">{{ errors.owner_name }}</p>
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-bold text-navy-900 mb-1.5">
+                                        Status Pemilik Properti <span class="text-red-500">*</span>
+                                    </label>
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <button type="button" @click="form.owner_status = 'Masih Hidup'" 
+                                                :class="form.owner_status === 'Masih Hidup' ? 'pill-btn-active' : 'bg-white text-slate-700 border-slate-200'"
+                                                class="py-2 px-2 rounded-xl border text-xs font-bold text-center">
+                                            Masih Hidup
+                                        </button>
+                                        <button type="button" @click="form.owner_status = 'Sudah Meninggal'" 
+                                                :class="form.owner_status === 'Sudah Meninggal' ? 'pill-btn-active' : 'bg-white text-slate-700 border-slate-200'"
+                                                class="py-2 px-2 rounded-xl border text-xs font-bold text-center">
+                                            Sudah Meninggal
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Property Title -->
+                            <div>
+                                <label class="block text-xs font-bold text-navy-900 mb-1">
+                                    Nama / Judul Properti <span class="text-slate-400 font-normal">(Opsional)</span>
+                                </label>
+                                <input type="text" v-model="form.property_title" placeholder="Contoh: Ruko Minimalis 3 Lantai Kaliurang"
+                                       class="w-full px-3.5 py-3 text-xs font-semibold text-slate-900 gdp-input">
+                            </div>
+
+                            <!-- Property Type & Subcategory Selection -->
+                            <div>
+                                <label class="block text-xs font-bold text-navy-900 mb-1.5">
+                                    Kategori Properti ({{ form.property_type }})
+                                </label>
+                                
+                                <!-- Subcategories for Bangunan -->
+                                <div v-if="form.property_type === 'Bangunan'" class="grid grid-cols-3 gap-1.5">
+                                    <button v-for="sub in ['Rumah', 'Villa', 'Ruko', 'Apartemen', 'Gudang', 'Hotel']" :key="sub"
+                                            type="button" @click="form.property_subcategory = sub"
+                                            :class="form.property_subcategory === sub ? 'pill-btn-active' : 'bg-slate-100 text-slate-700 border-slate-200'"
+                                            class="py-2 px-1.5 rounded-xl border text-[10px] font-bold text-center">
+                                        {{ sub }}
+                                    </button>
+                                </div>
+
+                                <!-- Subcategories for Tanah -->
+                                <div v-if="form.property_type === 'Tanah'" class="grid grid-cols-3 gap-2">
+                                    <button v-for="sub in ['Kavling', 'Lahan', 'Sawah']" :key="sub"
+                                            type="button" @click="form.property_subcategory = sub"
+                                            :class="form.property_subcategory === sub ? 'pill-btn-active' : 'bg-slate-100 text-slate-700 border-slate-200'"
+                                            class="py-2.5 px-2 rounded-xl border text-xs font-bold text-center">
+                                        {{ sub }}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button @click="nextStep" class="w-full py-4 bg-navy-900 text-white rounded-full font-extrabold text-xs tracking-wide shadow-lg hover:bg-navy-950 transition flex items-center justify-center gap-2 active:scale-95">
+                            <span>Lanjut ke Detail Properti</span>
+                            <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                        </button>
+                    </div>
+                </transition>
+
+
+                <!-- ================= STEP 2: DETAIL PROPERTI (BANGUNAN - MANDATORY FIELDS) ================= -->
+                <transition name="fade-slide" mode="out-in">
+                    <div v-if="currentStep === 2 && form.property_type === 'Bangunan'" class="space-y-4">
+                        <div class="bg-white p-5 squircle-card border border-slate-100 shadow-soft-elevation space-y-4">
+                            <div>
+                                <span class="text-[9.5px] font-extrabold text-gold-600 uppercase tracking-wider bg-gold-400/10 px-2.5 py-0.5 rounded-full">Bagian 2</span>
+                                <h2 class="text-base font-extrabold text-navy-900 mt-1">Spesifikasi {{ form.property_subcategory || 'Bangunan' }}</h2>
+                                <p class="text-[10px] text-slate-400">Harap isi seluruh field bertanda (<span class="text-red-500">*</span>).</p>
+                            </div>
+
+                            <!-- Land & Building Area Grid -->
+                            <div class="grid grid-cols-2 gap-2.5">
+                                <div>
+                                    <label class="block text-[11px] font-bold text-navy-900 mb-1">
+                                        Luas Tanah (m²) <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="number" v-model.number="form.land_area" placeholder="120"
+                                           class="w-full p-2.5 rounded-xl text-xs font-semibold text-slate-900 gdp-input">
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] font-bold text-navy-900 mb-1">
+                                        Luas Bangunan (m²) <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="number" v-model.number="form.building_area" placeholder="90"
+                                           class="w-full p-2.5 rounded-xl text-xs font-semibold text-slate-900 gdp-input">
+                                </div>
+                            </div>
+
+                            <!-- Kamar Tidur, Kamar Mandi, Jumlah Lantai Grid -->
+                            <div class="grid grid-cols-3 gap-2">
+                                <div>
+                                    <label class="block text-[10px] font-bold text-navy-900 mb-1">
+                                        Kamar Tidur <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="number" v-model.number="form.bedrooms" min="0" placeholder="3"
+                                           class="w-full p-2 rounded-xl text-xs font-semibold text-slate-900 text-center gdp-input">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-navy-900 mb-1">
+                                        Kamar Mandi <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="number" v-model.number="form.bathrooms" min="0" placeholder="2"
+                                           class="w-full p-2 rounded-xl text-xs font-semibold text-slate-900 text-center gdp-input">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-navy-900 mb-1">
+                                        Jumlah Lantai <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="number" v-model.number="form.floors" min="1" placeholder="1"
+                                           class="w-full p-2 rounded-xl text-xs font-semibold text-slate-900 text-center gdp-input">
+                                </div>
+                            </div>
+
+                            <!-- Carport / Garasi Mobil -->
+                            <div>
+                                <label class="block text-xs font-bold text-navy-900 mb-1.5">
+                                    Carport / Garasi Mobil <span class="text-red-500">*</span>
+                                </label>
+                                <div class="flex flex-wrap gap-1.5">
+                                    <button v-for="opt in ['0', '1', '2', '3', 'Lainnya']" :key="opt"
+                                            type="button" @click="form.carport_garage = opt"
+                                            :class="form.carport_garage === opt ? 'pill-btn-active' : 'bg-slate-100 text-slate-700 border-slate-200'"
+                                            class="py-1.5 px-3 rounded-xl border text-xs font-bold">
+                                        {{ opt }}
+                                    </button>
+                                </div>
+                                <input v-if="form.carport_garage === 'Lainnya'" type="text" v-model="form.custom_carport" placeholder="Ketik kapasitas mobil"
+                                       class="w-full p-2.5 mt-2 rounded-xl text-xs font-semibold text-slate-900 gdp-input">
+                            </div>
+
+                            <!-- Kondisi Perabot -->
+                            <div>
+                                <label class="block text-xs font-bold text-navy-900 mb-1.5">
+                                    Kondisi Perabot <span class="text-red-500">*</span>
+                                </label>
+                                <div class="grid grid-cols-3 gap-1.5">
+                                    <button v-for="opt in ['Unfurnished', 'Semi-furnished', 'Full-furnished']" :key="opt"
+                                            type="button" @click="form.furnishing = opt"
+                                            :class="form.furnishing === opt ? 'pill-btn-active' : 'bg-slate-100 text-slate-700 border-slate-200'"
+                                            class="py-2 px-1 rounded-xl border text-[10px] font-bold text-center">
+                                        {{ opt }}
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Facilities -->
+                            <div>
+                                <label class="block text-xs font-bold text-navy-900 mb-1">Fasilitas Utama</label>
+                                <input type="text" v-model="form.facilities" placeholder="e.g. Taman, Kolam Renang, Smart Home, Rooftop"
+                                       class="w-full p-2.5 rounded-xl text-xs font-semibold text-slate-900 gdp-input">
+                            </div>
+
+                            <!-- Electricity & Water -->
+                            <div class="grid grid-cols-2 gap-2.5">
+                                <div>
+                                    <label class="block text-[11px] font-bold text-navy-900 mb-1">
+                                        Daya Listrik <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="text" v-model="form.electricity" placeholder="e.g. 1300 VA / 2200 VA"
+                                           class="w-full p-2.5 rounded-xl text-xs font-semibold text-slate-900 gdp-input">
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] font-bold text-navy-900 mb-1">
+                                        Sumber Air <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="text" v-model="form.water_source" placeholder="e.g. Sumur Bor / PDAM"
+                                           class="w-full p-2.5 rounded-xl text-xs font-semibold text-slate-900 gdp-input">
+                                </div>
+                            </div>
+
+                            <!-- Legalities & Facing Direction -->
+                            <div class="grid grid-cols-2 gap-2.5">
+                                <div>
+                                    <label class="block text-[11px] font-bold text-navy-900 mb-1">
+                                        Legalitas <span class="text-red-500">*</span>
+                                    </label>
+                                    <select v-model="form.certificate" class="w-full p-2.5 rounded-xl text-xs font-semibold text-slate-900 gdp-input">
+                                        <option value="">Pilih...</option>
+                                        <option value="SHM">SHM</option>
+                                        <option value="HGB">HGB</option>
+                                        <option value="Lainnya">Lainnya</option>
+                                        <option value="Belum diketahui">Belum diketahui</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] font-bold text-navy-900 mb-1">
+                                        Hadap Bangunan <span class="text-red-500">*</span>
+                                    </label>
+                                    <select v-model="form.facing_direction" class="w-full p-2.5 rounded-xl text-xs font-semibold text-slate-900 gdp-input">
+                                        <option value="">Pilih...</option>
+                                        <option v-for="dir in facingDirections" :key="dir" :value="dir">{{ dir }}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button @click="nextStep" class="w-full py-3.5 bg-navy-900 text-white rounded-full font-extrabold text-xs tracking-wide shadow-ios-btn hover:bg-navy-950 transition flex items-center justify-center gap-2">
+                            <span>Lanjut ke Lokasi & Akses</span>
+                            <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                        </button>
+                    </div>
+                </transition>
+
+
+                <!-- ================= STEP 2: DETAIL PROPERTI (TANAH - MANDATORY FIELDS) ================= -->
+                <transition name="fade-slide" mode="out-in">
+                    <div v-if="currentStep === 2 && form.property_type === 'Tanah'" class="space-y-4">
+                        <div class="bg-white p-5 squircle-card border border-slate-100 shadow-soft-elevation space-y-4">
+                            <div>
+                                <span class="text-[9.5px] font-extrabold text-gold-600 uppercase tracking-wider bg-gold-400/10 px-2.5 py-0.5 rounded-full">Bagian 2</span>
+                                <h2 class="text-base font-extrabold text-navy-900 mt-1">Spesifikasi {{ form.property_subcategory || 'Tanah' }}</h2>
+                                <p class="text-[10px] text-slate-400">Harap isi seluruh field bertanda (<span class="text-red-500">*</span>).</p>
+                            </div>
+
+                            <!-- Land Area & Land Width -->
+                            <div class="grid grid-cols-2 gap-2.5">
+                                <div>
+                                    <label class="block text-[11px] font-bold text-navy-900 mb-1">
+                                        Luas Tanah (m²) <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="number" v-model.number="form.land_area" placeholder="500"
+                                           class="w-full p-2.5 rounded-xl text-xs font-semibold text-slate-900 gdp-input">
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] font-bold text-navy-900 mb-1">
+                                        Lebar Muka (m) <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="number" v-model.number="form.land_width" placeholder="15"
+                                           class="w-full p-2.5 rounded-xl text-xs font-semibold text-slate-900 gdp-input">
+                                </div>
+                            </div>
+
+                            <!-- Land Shape -->
+                            <div>
+                                <label class="block text-xs font-bold text-navy-900 mb-1">
+                                    Bentuk Tanah <span class="text-red-500">*</span>
+                                </label>
+                                <select v-model="form.land_shape" class="w-full p-2.5 rounded-xl text-xs font-semibold text-slate-900 gdp-input">
+                                    <option value="">Pilih Bentuk...</option>
+                                    <option value="Persegi">Persegi</option>
+                                    <option value="Persegi Panjang">Persegi Panjang</option>
+                                    <option value="Hook">Hook / Pojok</option>
+                                    <option value="L-Shape">L-Shape</option>
+                                    <option value="Tidak Beraturan">Tidak Beraturan</option>
+                                    <option value="Lainnya">Lainnya</option>
+                                </select>
+                            </div>
+
+                            <!-- Land Condition -->
+                            <div>
+                                <label class="block text-xs font-bold text-navy-900 mb-1">
+                                    Kondisi / Kontur Tanah <span class="text-red-500">*</span>
+                                </label>
+                                <select v-model="form.land_condition" class="w-full p-2.5 rounded-xl text-xs font-semibold text-slate-900 gdp-input">
+                                    <option value="">Pilih Kontur...</option>
+                                    <option value="Datar">Datar</option>
+                                    <option value="Terasering">Terasering / Miring</option>
+                                    <option value="Siap Bangun">Siap Bangun</option>
+                                    <option value="Perlu Urug">Perlu Urug</option>
+                                    <option value="Lainnya">Lainnya</option>
+                                </select>
+                            </div>
+
+                            <!-- Road Access -->
+                            <div>
+                                <label class="block text-xs font-bold text-navy-900 mb-1">
+                                    Akses Jalan utama <span class="text-red-500">*</span>
+                                </label>
+                                <select v-model="form.road_access" class="w-full p-2.5 rounded-xl text-xs font-semibold text-slate-900 gdp-input">
+                                    <option value="">Pilih Akses Utama...</option>
+                                    <option value="Jalan Motor">Jalan Motor</option>
+                                    <option value="Mobil Masuk">Mobil Masuk (1 Mobil)</option>
+                                    <option value="Mobil Papasan">Mobil Papasan (2 Mobil)</option>
+                                    <option value="Truk Bisa Masuk">Truk / Bus Bisa Masuk</option>
+                                    <option value="Lainnya">Lainnya</option>
+                                </select>
+                            </div>
+
+                            <!-- Zoning / Peruntukan -->
+                            <div>
+                                <label class="block text-xs font-bold text-navy-900 mb-1">Peruntukan Lahan (Zoning)</label>
+                                <select v-model="form.zoning" class="w-full p-2.5 rounded-xl text-xs font-semibold text-slate-900 gdp-input">
+                                    <option value="">Pilih Zoning...</option>
+                                    <option value="Perumahan">Perumahan / Pemukiman</option>
+                                    <option value="Komersial">Komersial / Usaha</option>
+                                    <option value="Industri">Industri / Gudang</option>
+                                    <option value="Pertanian">Pertanian / Perkebunan</option>
+                                    <option value="Campuran">Campuran</option>
+                                    <option value="Belum diketahui">Belum diketahui</option>
+                                </select>
+                            </div>
+
+                            <!-- Certificate & Direction Grid -->
+                            <div class="grid grid-cols-2 gap-2.5">
+                                <div>
+                                    <label class="block text-[11px] font-bold text-navy-900 mb-1">
+                                        Legalitas <span class="text-red-500">*</span>
+                                    </label>
+                                    <select v-model="form.certificate" class="w-full p-2.5 rounded-xl text-xs font-semibold text-slate-900 gdp-input">
+                                        <option value="">Pilih...</option>
+                                        <option value="SHM">SHM</option>
+                                        <option value="HGB">HGB</option>
+                                        <option value="Girik">Girik / Letter C</option>
+                                        <option value="Lainnya">Lainnya</option>
+                                        <option value="Belum diketahui">Belum diketahui</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] font-bold text-navy-900 mb-1">
+                                        Hadap Tanah <span class="text-red-500">*</span>
+                                    </label>
+                                    <select v-model="form.facing_direction" class="w-full p-2.5 rounded-xl text-xs font-semibold text-slate-900 gdp-input">
+                                        <option value="">Pilih...</option>
+                                        <option v-for="dir in facingDirections" :key="dir" :value="dir">{{ dir }}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button @click="nextStep" class="w-full py-3.5 bg-navy-900 text-white rounded-full font-extrabold text-xs tracking-wide shadow-ios-btn hover:bg-navy-950 transition flex items-center justify-center gap-2">
+                            <span>Lanjut ke Lokasi & Akses</span>
+                            <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                        </button>
+                    </div>
+                </transition>
+
+
+                <!-- ================= STEP 3: LOKASI & AKSESIBILITAS DINAMIS (+) ================= -->
+                <transition name="fade-slide" mode="out-in">
+                    <div v-if="currentStep === 3" class="space-y-4">
+                        <div class="bg-white p-5 squircle-card border border-slate-100 shadow-soft-elevation space-y-4">
+                            <div>
+                                <span class="text-[9.5px] font-extrabold text-gold-600 uppercase tracking-wider bg-gold-400/10 px-2.5 py-0.5 rounded-full">Bagian 3</span>
+                                <h2 class="text-base font-extrabold text-navy-900 mt-1">Lokasi & Aksesibilitas</h2>
+                                <p class="text-xs text-slate-400">Tambahkan lokasi akses terdekat untuk menarik minat pembeli.</p>
+                            </div>
+
+                            <!-- Address Input -->
+                            <div>
+                                <label class="block text-xs font-bold text-navy-900 mb-1">
+                                    Alamat Lokasi Properti <span class="text-red-500">*</span>
+                                </label>
+                                <textarea v-model="form.address" rows="2" placeholder="e.g. Jl. Kaliurang Km 9, Sleman, Yogyakarta"
+                                          class="w-full p-2.5 rounded-xl text-xs font-semibold text-slate-900 gdp-input"></textarea>
+                                <p v-if="errors.address" class="text-[10px] text-red-500 mt-1 font-semibold">{{ errors.address }}</p>
+                            </div>
+
+                            <!-- Google Maps Link -->
+                            <div>
+                                <label class="block text-xs font-bold text-navy-900 mb-1">
+                                    Link Google Maps <span class="text-slate-400 font-normal">(Opsional)</span>
+                                </label>
+                                <input type="url" v-model="form.maps_url" placeholder="https://maps.app.goo.gl/..."
+                                       class="w-full px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-900 gdp-input">
+                            </div>
+
+                            <!-- Dynamic Accessibility Groups with (+) Add Buttons -->
+                            <div class="pt-1 space-y-3">
+                                <label class="block text-[10px] font-extrabold uppercase text-navy-900 tracking-wider">
+                                    Estimasi Akses Terdekat (Dapat Ditambah)
+                                </label>
+
+                                <div v-for="(category, catIndex) in accessCategories" :key="catIndex"
+                                     class="p-3 bg-slate-50 border border-slate-200/80 rounded-2xl space-y-2">
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-[10.5px] font-extrabold text-navy-900 flex items-center gap-1.5">
+                                            <i :class="category.icon" class="text-gold-600"></i> {{ category.title }}
+                                        </span>
+                                        <!-- (+) Add Button -->
+                                        <button @click="addAccessItem(catIndex)" 
+                                                class="px-2 py-0.5 bg-navy-900 text-gold-400 text-[9.5px] font-extrabold rounded-full flex items-center gap-1 shadow-sm active:scale-95 transition">
+                                            <i class="fa-solid fa-plus text-[9px]"></i>
+                                            <span>Tambah</span>
+                                        </button>
+                                    </div>
+
+                                    <!-- Access Rows -->
+                                    <div v-for="(item, itemIndex) in category.items" :key="itemIndex" class="grid grid-cols-12 gap-1.5 items-center">
+                                        <input type="text" v-model="item.name" :placeholder="category.placeholder"
+                                               class="col-span-7 p-2 bg-white border border-slate-200 rounded-xl text-xs font-medium">
+                                        <input type="number" v-model.number="item.minutes" placeholder="Mnt"
+                                               class="col-span-3 p-2 bg-white border border-slate-200 rounded-xl text-xs font-medium text-center">
+                                        <button v-if="category.items.length > 1" @click="removeAccessItem(catIndex, itemIndex)" 
+                                                class="col-span-2 p-2 text-slate-400 hover:text-red-500 text-xs text-center">
+                                            <i class="fa-solid fa-trash-can"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button @click="nextStep" class="w-full py-3.5 bg-navy-900 text-white rounded-full font-extrabold text-xs tracking-wide shadow-ios-btn hover:bg-navy-950 transition flex items-center justify-center gap-2">
+                            <span>Lanjut ke Keunggulan</span>
+                            <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                        </button>
+                    </div>
+                </transition>
+
+
+                <!-- ================= STEP 4: KEUNGGULAN & AKSES JALAN PROPERTI ================= -->
+                <transition name="fade-slide" mode="out-in">
+                    <div v-if="currentStep === 4" class="space-y-4">
+                        <div class="bg-white p-5 squircle-card border border-slate-100 shadow-soft-elevation space-y-4">
+                            <div>
+                                <span class="text-[9.5px] font-extrabold text-gold-600 uppercase tracking-wider bg-gold-400/10 px-2.5 py-0.5 rounded-full">Bagian 4</span>
+                                <h2 class="text-base font-extrabold text-navy-900 mt-1">Keunggulan & Akses Properti</h2>
+                                <p class="text-xs text-slate-400">Poin utama yang wajib disorot pada narasi video.</p>
+                            </div>
+
+                            <!-- Key Selling Points & Road Access Multi-select Checkboxes -->
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="block text-[10px] font-extrabold text-navy-900 mb-1">Keunggulan Utama 1</label>
+                                    <input type="text" v-model="form.selling_point_1" placeholder="e.g. Dekat kampus UGM & RS Sardjito"
+                                           class="w-full px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-900 gdp-input">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-extrabold text-navy-900 mb-1">Keunggulan Utama 2</label>
+                                    <input type="text" v-model="form.selling_point_2" placeholder="e.g. Lingkungan asri & One Gate System"
+                                           class="w-full px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-900 gdp-input">
+                                </div>
+                                
+                                <!-- Akses Jalan Properti Checkboxes -->
+                                <div class="pt-1">
+                                    <label class="block text-xs font-bold text-navy-900 mb-1">
+                                        Akses Jalan Properti <span class="text-red-500">*</span> <span class="text-slate-400 font-normal">(Bisa Pilih Lebih Dari Satu)</span>
+                                    </label>
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5 mt-1.5">
+                                        <label v-for="road in roadAccessOptions" :key="road"
+                                               class="p-2.5 rounded-xl border border-slate-200 bg-slate-50/60 flex items-center gap-2 cursor-pointer text-[11px] font-semibold text-slate-700 hover:bg-slate-100 transition">
+                                            <input type="checkbox" :value="road" v-model="form.road_access_types" class="w-3.5 h-3.5 accent-navy-900 rounded cursor-pointer">
+                                            <span>{{ road }}</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Development Potential (FOR LAND ONLY) -->
+                            <div v-if="form.property_type === 'Tanah'" class="space-y-2 pt-2 border-t border-slate-100">
+                                <label class="block text-xs font-bold text-navy-900">
+                                    Potensi Peruntukan Lahan
+                                </label>
+                                <p class="text-[10px] text-slate-400">Pilih ide peruntukan yang cocok ditayangkan:</p>
+
+                                <div class="grid grid-cols-2 gap-1.5">
+                                    <label v-for="pot in landPotentials" :key="pot"
+                                           class="p-2 rounded-xl border border-slate-200 bg-slate-50/60 flex items-center gap-2 cursor-pointer text-[11px] font-semibold text-slate-700">
+                                        <input type="checkbox" :value="pot" v-model="form.development_potential" class="w-3.5 h-3.5 accent-navy-900 rounded">
+                                        <span>{{ pot }}</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button @click="nextStep" class="w-full py-3.5 bg-navy-900 text-white rounded-full font-extrabold text-xs tracking-wide shadow-ios-btn hover:bg-navy-950 transition flex items-center justify-center gap-2">
+                            <span>Lanjut ke Harga & Pembayaran</span>
+                            <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                        </button>
+                    </div>
+                </transition>
+
+
+                <!-- ================= STEP 5: HARGA & SKEMA PEMBAYARAN ("Nego") ================= -->
+                <transition name="fade-slide" mode="out-in">
+                    <div v-if="currentStep === 5" class="space-y-4">
+                        <div class="bg-white p-5 squircle-card border border-slate-100 shadow-soft-elevation space-y-4">
+                            <div>
+                                <span class="text-[9.5px] font-extrabold text-dutch-orange uppercase tracking-wider bg-orange-500/10 px-2.5 py-0.5 rounded-full">Bagian 5</span>
+                                <h2 class="text-base font-extrabold text-navy-900 mt-1">Harga & Skema Pembayaran</h2>
+                            </div>
+
+                            <!-- Transaction Type (MULTI-SELECT: Dijual, Disewakan, or Both) -->
+                            <div>
+                                <label class="block text-xs font-bold text-navy-900 mb-1">Jenis Transaksi (Bisa Pilih Keduanya)</label>
+                                <p class="text-[10px] text-slate-400 mb-1.5">Pilih salah satu atau centang keduanya jika dijual & disewakan:</p>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <button type="button" @click="toggleTransactionType('Jual')" 
+                                            :class="form.transaction_types.includes('Jual') ? 'pill-btn-active' : 'bg-slate-100 text-slate-700 border-slate-200'"
+                                            class="py-2.5 px-3 rounded-xl border text-xs font-bold flex items-center justify-center gap-2">
+                                        <i v-if="form.transaction_types.includes('Jual')" class="fa-solid fa-check text-xs"></i>
+                                        <span>Dijual (Jual)</span>
+                                    </button>
+                                    <button type="button" @click="toggleTransactionType('Sewa')" 
+                                            :class="form.transaction_types.includes('Sewa') ? 'pill-btn-active' : 'bg-slate-100 text-slate-700 border-slate-200'"
+                                            class="py-2.5 px-3 rounded-xl border text-xs font-bold flex items-center justify-center gap-2">
+                                        <i v-if="form.transaction_types.includes('Sewa')" class="fa-solid fa-check text-xs"></i>
+                                        <span>Disewakan (Sewa)</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Price Input in Rupiah -->
+                            <div>
+                                <label class="block text-xs font-bold text-navy-900 mb-1">
+                                    Harga Penawaran <span class="text-red-500">*</span>
+                                </label>
+                                <div class="relative">
+                                    <span class="absolute left-3.5 top-2.5 text-xs font-extrabold text-navy-900">Rp</span>
+                                    <input type="text" :value="formattedPrice" @input="onPriceInput" placeholder="1.250.000.000"
+                                           class="w-full pl-10 pr-3.5 py-2.5 rounded-xl text-xs font-extrabold text-navy-900 gdp-input">
+                                </div>
+                                <p v-if="form.price > 0" class="text-[10px] text-emerald-700 font-bold mt-1">
+                                    Terbaca: {{ priceInWords }}
+                                </p>
+                                <p v-if="errors.price" class="text-[10px] text-red-500 mt-1 font-semibold">{{ errors.price }}</p>
+                            </div>
+
+                            <!-- Price Unit (Land only) -->
+                            <div v-if="form.property_type === 'Tanah'">
+                                <label class="block text-xs font-bold text-navy-900 mb-1.5">Satuan Harga</label>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <button type="button" @click="form.price_unit = 'Harga Total'" 
+                                            :class="form.price_unit === 'Harga Total' ? 'pill-btn-active' : 'bg-slate-100 text-slate-700 border-slate-200'"
+                                            class="py-2 px-2 rounded-xl border text-xs font-bold">
+                                        Harga Total
+                                    </button>
+                                    <button type="button" @click="form.price_unit = 'Per Meter Square'" 
+                                            :class="form.price_unit === 'Per Meter Square' ? 'pill-btn-active' : 'bg-slate-100 text-slate-700 border-slate-200'"
+                                            class="py-2 px-2 rounded-xl border text-xs font-bold">
+                                        Harga / m²
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Komisi Fee untuk GDP -->
+                            <div>
+                                <label class="block text-xs font-bold text-navy-900 mb-1">
+                                    Komisi Fee Jika Terjual melalui GDP (%) <span class="text-red-500">*</span>
+                                </label>
+                                <div class="relative flex items-center">
+                                    <input type="number" v-model.number="form.commission_fee" min="2.5" step="0.1" placeholder="2.5"
+                                           class="w-full px-3.5 py-2.5 rounded-xl text-xs font-extrabold text-navy-900 gdp-input pr-12">
+                                    <span class="absolute right-3.5 text-xs font-extrabold text-slate-500">%</span>
+                                </div>
+                                <p class="text-[9.5px] text-slate-400 mt-1">Minimal 2,5%. Anda dapat memberikan persentase lebih sesuai keinginan.</p>
+                                <p v-if="errors.commission_fee" class="text-[10px] text-red-500 mt-1 font-semibold">{{ errors.commission_fee }}</p>
+                            </div>
+
+                            <!-- Payment Scheme ("Nego") -->
+                            <div>
+                                <label class="block text-xs font-bold text-navy-900 mb-1.5">Skema Pembayaran</label>
+                                <div class="grid grid-cols-3 gap-2">
+                                    <button v-for="scheme in ['Cash', 'Bertahap', 'Nego']" :key="scheme"
+                                            type="button" @click="form.payment_scheme = scheme"
+                                            :class="form.payment_scheme === scheme ? 'pill-btn-active' : 'bg-slate-100 text-slate-700 border-slate-200'"
+                                            class="py-2 px-2 rounded-xl border text-xs font-bold text-center">
+                                        {{ scheme }}
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Price Notes -->
+                            <div>
+                                <label class="block text-xs font-bold text-navy-900 mb-1">Catatan Ketentuan Harga (Opsional)</label>
+                                <input type="text" v-model="form.price_notes" placeholder="e.g. Nego halus, sudah termasuk biaya AJB & BBPHTB"
+                                       class="w-full p-2.5 rounded-xl text-xs font-semibold text-slate-900 gdp-input">
+                            </div>
+                        </div>
+
+                        <button @click="nextStep" class="w-full py-3.5 bg-navy-900 text-white rounded-full font-extrabold text-xs tracking-wide shadow-ios-btn hover:bg-navy-950 transition flex items-center justify-center gap-2">
+                            <span>Tinjau Ringkasan Brief</span>
+                            <i class="fa-solid fa-check-double text-[10px]"></i>
+                        </button>
+                    </div>
+                </transition>
+
+
+                <!-- ================= STEP 6: RINGKASAN & PRATINJAU BRIEF (+ PDF FUNCTION) ================= -->
+                <transition name="fade-slide" mode="out-in">
+                    <div v-if="currentStep === 6" class="space-y-4">
+                        <div id="printable-brief" class="bg-white p-5 squircle-card border border-slate-100 shadow-soft-elevation space-y-3.5 text-xs">
+                            <div class="border-b border-slate-100 pb-2.5 flex justify-between items-center gap-2">
+                                <div>
+                                    <span class="text-[9px] bg-emerald-100 text-emerald-800 font-extrabold px-2.5 py-0.5 rounded-full uppercase">Review Brief</span>
+                                    <h2 class="text-base font-extrabold text-navy-900 mt-1">Ringkasan Brief Properti</h2>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <!-- PDF Export Button -->
+                                    <button @click="printBriefPDF" title="Cetak / Simpan PDF" class="px-2.5 py-1.5 bg-red-50 text-red-600 hover:bg-red-100 rounded-xl text-xs font-extrabold flex items-center gap-1 border border-red-200 transition no-print active:scale-95">
+                                        <i class="fa-solid fa-file-pdf text-sm"></i>
+                                        <span>PDF</span>
+                                    </button>
+                                    <span class="px-2.5 py-1 bg-navy-900 text-dutch-orange font-extrabold rounded-full text-[10px] truncate max-w-[120px]">
+                                        {{ form.property_type }} / {{ form.property_subcategory || 'Umum' }}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Header Info & Ownership Status -->
+                            <div class="bg-slate-50 p-3 rounded-2xl border border-slate-100 space-y-1">
+                                <div class="font-extrabold text-navy-900 text-xs">{{ form.customer_name || 'Nama Belum Diisi' }}</div>
+                                <div class="text-[10px] text-slate-500 font-medium">No. WhatsApp: <span class="text-slate-800 font-bold">{{ form.whatsapp || '-' }}</span></div>
+                                <div class="text-[10px] text-slate-500 font-medium">
+                                    Kepemilikan: 
+                                    <span class="text-navy-900 font-bold">{{ form.is_owner_name }}</span>
+                                    <span v-if="form.is_owner_name === 'Bukan Atas Nama Saya' && form.owner_name">
+                                        ({{ form.owner_name }} - {{ form.owner_status }})
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Specs Grid -->
+                            <div class="grid grid-cols-2 gap-2 text-[10px] text-slate-600 bg-slate-50/50 p-3 rounded-2xl border border-slate-100">
+                                <div><strong class="text-slate-900">Judul:</strong> {{ form.property_title || '-' }}</div>
+                                <div><strong class="text-slate-900">Transaksi:</strong> {{ form.transaction_types.join(' & ') }}</div>
+                                <div><strong class="text-slate-900">Luas Tanah:</strong> {{ form.land_area ? form.land_area + ' m²' : '-' }}</div>
+                                <div v-if="form.property_type === 'Bangunan'"><strong class="text-slate-900">Luas Bangunan:</strong> {{ form.building_area ? form.building_area + ' m²' : '-' }}</div>
+                                <div v-if="form.property_type === 'Bangunan'"><strong class="text-slate-900">Kamar:</strong> {{ form.bedrooms || 0 }} Tidur / {{ form.bathrooms || 0 }} Mandi</div>
+                                <div v-if="form.property_type === 'Bangunan'"><strong class="text-slate-900">Garasi:</strong> {{ form.carport_garage === 'Lainnya' ? form.custom_carport : form.carport_garage }}</div>
+                                <div v-if="form.property_type === 'Tanah'"><strong class="text-slate-900">Lebar Muka:</strong> {{ form.land_width ? form.land_width + ' m' : '-' }}</div>
+                                <div><strong class="text-slate-900">Harga:</strong> Rp {{ formatRupiahDisplay(form.price) }}</div>
+                                <div><strong class="text-slate-900">Komisi GDP:</strong> <span class="text-dutch-orange font-bold">{{ form.commission_fee || 2.5 }}%</span></div>
+                                <div><strong class="text-slate-900">Legalitas:</strong> {{ form.certificate || '-' }}</div>
+                                <div><strong class="text-slate-900">Hadap:</strong> {{ form.facing_direction || '-' }}</div>
+                            </div>
+
+                            <!-- Address -->
+                            <div class="text-[10px] bg-slate-50/50 p-3 rounded-2xl border border-slate-100">
+                                <strong class="text-navy-900">Alamat Properti:</strong>
+                                <p class="text-slate-600 mt-0.5">{{ form.address || '-' }}</p>
+                            </div>
+
+                            <!-- Accessibility List Summary -->
+                            <div class="text-[10px] bg-slate-50/50 p-3 rounded-2xl border border-slate-100">
+                                <strong class="text-navy-900">Estimasi Akses Terdekat:</strong>
+                                <div class="mt-1 space-y-1 text-slate-600">
+                                    <template v-for="cat in accessCategories">
+                                        <div v-for="item in cat.items" :key="item.name">
+                                            <span v-if="item.name">• {{ item.name }} ({{ item.minutes || '?' }} mnt)</span>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+
+                            <!-- Selling Points & Road Access -->
+                            <div class="text-[10px] bg-slate-50/50 p-3 rounded-2xl border border-slate-100">
+                                <strong class="text-navy-900">Keunggulan & Akses Jalan:</strong>
+                                <ul class="list-disc pl-4 text-slate-600 mt-0.5 space-y-0.5">
+                                    <li v-if="form.selling_point_1">{{ form.selling_point_1 }}</li>
+                                    <li v-if="form.selling_point_2">{{ form.selling_point_2 }}</li>
+                                    <li v-if="form.road_access_types.length > 0">
+                                        <strong>Akses Jalan:</strong> {{ form.road_access_types.join(', ') }}
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="space-y-2 pt-1 no-print">
+                            <button @click="nextStep" class="w-full py-4 bg-navy-900 text-white rounded-full font-extrabold text-xs tracking-wide shadow-ios-btn hover:bg-navy-950 transition flex items-center justify-center gap-2 active:scale-95">
+                                <span>Oke, Lanjutkan</span>
+                                <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                            </button>
+
+                            <button @click="currentStep = 1" class="w-full py-2 text-xs font-bold text-slate-500 hover:text-navy-900 transition">
+                                <i class="fa-solid fa-pen-to-square text-[10px] mr-1"></i> Edit Kembali
+                            </button>
+                        </div>
+                    </div>
+                </transition>
+
+
+                <!-- ================= STEP 7: MOU & PERJANJIAN KERJASAMA PEMASARAN ================= -->
+                <transition name="fade-slide" mode="out-in">
+                    <div v-if="currentStep === 7" class="space-y-4">
+                        <div class="bg-white p-5 squircle-card border border-navy-900/20 shadow-lg space-y-4">
+                            <div class="text-center pb-2 border-b border-slate-100">
+                                <div class="w-12 h-12 rounded-2xl bg-navy-900 text-gold-400 mx-auto flex items-center justify-center text-lg mb-2 shadow-md">
+                                    <i class="fa-solid fa-scale-balanced"></i>
+                                </div>
+                                <span class="text-[9px] font-extrabold bg-gold-400/20 text-navy-900 px-2.5 py-0.5 rounded-full uppercase tracking-wider">Perjanjian Resmi</span>
+                                <h2 class="text-sm font-extrabold text-navy-900 mt-1 uppercase">MOU Kerjasama Pemasaran Properti</h2>
+                                <p class="text-[10px] text-slate-400 font-semibold">Guntur Dagang Property & Pemilik Properti</p>
+                            </div>
+
+                            <!-- MOU Clauses -->
+                            <div class="space-y-3 text-[10.5px] text-slate-700 leading-relaxed max-h-[280px] overflow-y-auto pr-1">
+                                
+                                <div class="p-3 bg-slate-50 rounded-2xl border border-slate-200/80 space-y-1">
+                                    <strong class="text-navy-900 font-bold block flex items-center gap-1.5">
+                                        <i class="fa-solid fa-handshake text-gold-600"></i> Pasal 1: Ketentuan Komisi 2.5%
+                                    </strong>
+                                    <p class="text-slate-600 text-[10px]">
+                                        Pemilik properti menyetujui kewajiban pembayaran komisi sebesar <strong class="text-navy-900">2,5% (dua koma lima persen)</strong> dari total nilai transaksi jual/sewa apabila properti berhasil dipasarkan dan laku melalui perantara/mediasi <strong>Guntur Dagang Property (GDP)</strong>, dalam kondisi transaksi apapun.
+                                    </p>
+                                </div>
+
+                                <div class="p-3 bg-slate-50 rounded-2xl border border-slate-200/80 space-y-1">
+                                    <strong class="text-navy-900 font-bold block flex items-center gap-1.5">
+                                        <i class="fa-solid fa-user-shield text-gold-600"></i> Pasal 2: Hak Perantara & Transparansi
+                                    </strong>
+                                    <p class="text-slate-600 text-[10px]">
+                                        GDP bertindak sebagai mediator resmi antara pembeli dan penjual. GDP berhak mengetahui seluruh tahapan komunikasi, kesepakatan, serta detail transaksi yang berkaitan dengan properti ini guna memastikan perlindungan hak kedua belah pihak.
+                                    </p>
+                                </div>
+
+                                <div class="p-3 bg-slate-50 rounded-2xl border border-slate-200/80 space-y-1">
+                                    <strong class="text-navy-900 font-bold block flex items-center gap-1.5">
+                                        <i class="fa-solid fa-money-bill-transfer text-gold-600"></i> Pasal 3: Pencairan Komisi (DP & Bertahap)
+                                    </strong>
+                                    <p class="text-slate-600 text-[10px]">
+                                        Hak komisi GDP <strong class="text-navy-900">tidak harus menunggu pembayaran lunas</strong> dari pembeli. GDP berhak menerima hak bagian komisi secara proporsional sejak pembeli melakukan pembayaran Uang Muka (DP) atau skema pembayaran bertahap pertama.
+                                    </p>
+                                </div>
+
+                                <div class="p-3 bg-slate-50 rounded-2xl border border-slate-200/80 space-y-1">
+                                    <strong class="text-navy-900 font-bold block flex items-center gap-1.5">
+                                        <i class="fa-solid fa-award text-gold-600"></i> Pasal 4: Positioning Legalitas GDP
+                                    </strong>
+                                    <p class="text-slate-600 text-[10px]">
+                                        GDP adalah Lembaga Pemasaran Digital Properti Resmi terpublikasi. Kesepakatan ini mengikat secara hukum dan memberikan hak penuh bagi GDP untuk mengelola serta mempromosikan media iklan properti ini.
+                                    </p>
+                                </div>
+
+                            </div>
+
+                            <!-- Consent Checkbox -->
+                            <div class="bg-navy-900/5 p-3 rounded-2xl border border-navy-900/10 flex items-start gap-2.5">
+                                <input type="checkbox" id="mouConsent" v-model="formConsent" class="w-4 h-4 mt-0.5 accent-navy-900 rounded cursor-pointer">
+                                <label for="mouConsent" class="text-[10px] font-bold text-navy-900 cursor-pointer leading-tight">
+                                    Saya membaca, memahami, dan menyetujui seluruh ketentuan MOU Komisi 2,5% serta menunjuk Guntur Dagang Property sebagai mediator resmi.
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="space-y-2 pt-1">
+                            <button @click="submitBrief" 
+                                    :disabled="!formConsent || isSubmitting"
+                                    :class="formConsent && !isSubmitting ? 'bg-navy-900 text-white hover:bg-navy-950 shadow-ios-btn' : 'bg-slate-300 text-slate-500 cursor-not-allowed'"
+                                    class="w-full py-4 rounded-full font-extrabold text-xs tracking-wide transition flex items-center justify-center gap-2">
+                                <i v-if="isSubmitting" class="fa-solid fa-spinner fa-spin text-xs"></i>
+                                <i v-else class="fa-paper-plane text-xs"></i>
+                                <span>{{ isSubmitting ? 'Mengirim Data...' : 'Setujui MOU & Kirim Data Properti' }}</span>
+                            </button>
+
+                            <button @click="currentStep = 6" class="w-full py-2 text-xs font-bold text-slate-500 hover:text-navy-900 transition">
+                                <i class="fa-solid fa-arrow-left text-[10px] mr-1"></i> Kembali ke Ringkasan
+                            </button>
+                        </div>
+                    </div>
+                </transition>
+
+
+                <!-- ================= STEP 8: HALAMAN BERHASIL ================= -->
+                <transition name="fade-slide" mode="out-in">
+                    <div v-if="currentStep === 8" class="text-center py-6 space-y-4">
+                        
+                        <div class="w-16 h-16 rounded-3xl bg-emerald-100 text-emerald-600 mx-auto flex items-center justify-center text-2xl shadow-lg shadow-emerald-500/20">
+                            <i class="fa-solid fa-check"></i>
+                        </div>
+
+                        <div class="space-y-2">
+                            <h2 class="text-lg font-extrabold text-navy-900 tracking-tight">
+                                Data Properti & MOU Berhasil Dikirim!
+                            </h2>
+                            <p class="text-xs text-slate-500 leading-relaxed max-w-xs mx-auto">
+                                Terima kasih! Data properti dan konfirmasi MOU Anda telah tercatat. Tim <strong class="text-navy-900">Guntur Dagang Property</strong> akan segera memproses materi video dan menghubungi Anda via WhatsApp.
+                            </p>
+                        </div>
+
+                        <!-- ID Badge Card -->
+                        <div class="bg-white border border-slate-200 p-4 squircle-card max-w-xs mx-auto text-left text-xs space-y-1.5 shadow-sm">
+                            <div class="flex justify-between text-slate-500 text-[10px]">
+                                <span>ID Pengajuan:</span>
+                                <span class="font-mono font-bold text-navy-900">{{ lastSubmissionId }}</span>
+                            </div>
+                            <div class="flex justify-between text-slate-500 text-[10px]">
+                                <span>Status Komisi:</span>
+                                <span class="text-gold-600 font-extrabold bg-gold-400/10 px-2.5 py-0.5 rounded-full">MOU 2.5% TERKONFIRMASI</span>
+                            </div>
+                        </div>
+
+                        <div class="space-y-2.5 pt-2 max-w-xs mx-auto">
+                            <!-- Tombol Konfirmasi WhatsApp -->
+                            <a :href="whatsappConfirmUrl" target="_blank" rel="noopener" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full font-extrabold text-xs tracking-wide shadow-lg transition flex items-center justify-center gap-2 active:scale-95 border border-emerald-500">
+                                <i class="fa-brands fa-whatsapp text-sm"></i>
+                                <span>Konfirmasi WhatsApp Sudah Isi Form</span>
+                            </a>
+
+                            <!-- Tombol Kirim Properti Lainnya -->
+                            <button @click="resetForm" class="w-full py-3 bg-slate-200 hover:bg-slate-300 text-navy-900 rounded-full font-extrabold text-xs tracking-wide transition flex items-center justify-center gap-1.5 active:scale-95">
+                                <i class="fa-solid fa-plus text-[10px]"></i>
+                                <span>Kirim Properti Lainnya</span>
+                            </button>
+                        </div>
+
+                    </div>
+                </transition>
+
+            </main>
+
+            <!-- CUSTOM TOAST NOTIFICATION -->
+            <transition name="toast">
+                <div v-if="toast.show" 
+                     :class="toast.type === 'error' ? 'bg-red-600 text-white' : 'bg-navy-900 text-dutch-orange'"
+                     class="fixed top-6 left-1/2 -translate-x-1/2 z-50 px-4 py-2.5 rounded-full text-xs font-bold shadow-xl border border-white/20 flex items-center gap-2">
+                    <i :class="toast.type === 'error' ? 'fa-solid fa-triangle-exclamation' : 'fa-solid fa-circle-check'"></i>
+                    <span>{{ toast.message }}</span>
+                </div>
+            </transition>
+
+        </div>
+
+    </div>
+
+    <!-- Vue 3 Application Logic -->
+    <script>
+        const { createApp, ref, computed, reactive } = Vue;
+
+        createApp({
+            setup() {
+                const currentStep = ref(0);
+                const totalSteps = 7;
+                const isSubmitting = ref(false);
+                const formConsent = ref(false);
+                const lastSubmissionId = ref('');
+                
+                const toast = reactive({ show: false, message: '', type: 'info' });
+                const errors = reactive({
+                    customer_name: '',
+                    whatsapp: '',
+                    owner_name: '',
+                    address: '',
+                    price: '',
+                    commission_fee: ''
+                });
+
+                const facingDirections = [
+                    'Utara', 'Selatan', 'Timur', 'Barat', 
+                    'Timur Laut', 'Tenggara', 'Barat Daya', 'Barat Laut', 
+                    'Belum diketahui'
+                ];
+
+                const roadAccessOptions = [
+                    'Gang pejalan kaki',
+                    'Gang motor',
+                    'Mobil bisa masuk, sulit papasan',
+                    'Mobil bisa papasan',
+                    'Jalan lebar, 2 mobil lebih',
+                    'Truk bisa masuk',
+                    'Kontainer bisa masuk',
+                    'Tepi jalan utama / jalan raya',
+                    'Akses jalan bersama',
+                    'Lainnya'
+                ];
+
+                const landPotentials = [
+                    'Rumah Tinggal',
+                    'Kost-kostan',
+                    'Villa',
+                    'Ruko',
+                    'Gudang',
+                    'Cluster / Perumahan',
+                    'Investasi',
+                    'Lainnya'
+                ];
+
+                const accessCategories = ref([
+                    {
+                        title: 'Jalan Utama / Akses Tol',
+                        icon: 'fa-solid fa-road',
+                        placeholder: 'e.g. Tol Jogja-Bawen / Jl. Kaliurang',
+                        items: [{ name: '', minutes: null }]
+                    },
+                    {
+                        title: 'Transportasi Umum',
+                        icon: 'fa-solid fa-train',
+                        placeholder: 'e.g. Stasiun Lempuyangan / Bandara YIA',
+                        items: [{ name: '', minutes: null }]
+                    },
+                    {
+                        title: 'Mall & Pusat Kota',
+                        icon: 'fa-solid fa-store',
+                        placeholder: 'e.g. Pakuwon Mall / Malioboro',
+                        items: [{ name: '', minutes: null }]
+                    },
+                    {
+                        title: 'Fasilitas Penting / Edukasi',
+                        icon: 'fa-solid fa-graduation-cap',
+                        placeholder: 'e.g. Kampus UGM / RS Sardjito',
+                        items: [{ name: '', minutes: null }]
+                    }
+                ]);
+
+                const form = reactive({
+                    customer_name: '',
+                    whatsapp: '',
+                    is_owner_name: 'Atas Nama Saya',
+                    owner_name: '',
+                    owner_status: 'Masih Hidup',
+                    property_type: 'Bangunan',
+                    property_subcategory: 'Rumah',
+                    property_title: '',
+                    
+                    land_area: null,
+                    building_area: null,
+                    bedrooms: null,
+                    bathrooms: null,
+                    floors: null,
+                    carport_garage: '1',
+                    custom_carport: '',
+                    furnishing: 'Unfurnished',
+                    facilities: '',
+                    electricity: '',
+                    water_source: '',
+                    
+                    land_width: null,
+                    land_shape: '',
+                    land_condition: '',
+                    road_access: '',
+                    zoning: '',
+
+                    certificate: '',
+                    facing_direction: '',
+
+                    address: '',
+                    maps_url: '',
+
+                    selling_point_1: '',
+                    selling_point_2: '',
+                    selling_point_3: '',
+                    road_access_types: [],
+                    development_potential: [],
+
+                    transaction_types: ['Jual'],
+                    price: 0,
+                    commission_fee: 2.5,
+                    price_unit: 'Harga Total',
+                    payment_scheme: 'Cash',
+                    price_notes: ''
+                });
+
+                const showToast = (message, type = 'info') => {
+                    toast.message = message;
+                    toast.type = type;
+                    toast.show = true;
+                    setTimeout(() => {
+                        toast.show = false;
+                    }, 3000);
+                };
+
+                const getStepTitle = (step) => {
+                    const titles = {
+                        1: 'Kontak',
+                        2: 'Spesifikasi',
+                        3: 'Lokasi & Akses',
+                        4: 'Keunggulan',
+                        5: 'Harga & Komisi',
+                        6: 'Ringkasan Brief',
+                        7: 'MOU & Persetujuan'
+                    };
+                    return titles[step] || 'Brief';
+                };
+
+                const selectPropertyType = (type) => {
+                    form.property_type = type;
+                    if (type === 'Bangunan') {
+                        form.property_subcategory = 'Rumah';
+                    } else {
+                        form.property_subcategory = 'Kavling';
+                    }
+                };
+
+                const startBrief = () => {
+                    if (!form.property_type) {
+                        showToast('Pilih jenis properti terlebih dahulu', 'error');
+                        return;
+                    }
+                    currentStep.value = 1;
+                };
+
+                const validateStep = (step) => {
+                    errors.customer_name = '';
+                    errors.whatsapp = '';
+                    errors.owner_name = '';
+                    errors.address = '';
+                    errors.price = '';
+                    errors.commission_fee = '';
+
+                    if (step === 1) {
+                        if (!form.customer_name || !form.customer_name.trim()) {
+                            errors.customer_name = 'Nama customer wajib diisi';
+                            showToast('Mohon isi nama customer', 'error');
+                            return false;
+                        }
+                        if (!form.whatsapp || !form.whatsapp.trim()) {
+                            errors.whatsapp = 'Nomor WhatsApp wajib diisi';
+                            showToast('Mohon isi nomor WhatsApp', 'error');
+                            return false;
+                        }
+                        if (form.is_owner_name === 'Bukan Atas Nama Saya' && (!form.owner_name || !form.owner_name.trim())) {
+                            errors.owner_name = 'Nama pemilik properti wajib diisi';
+                            showToast('Mohon isi nama pemilik properti', 'error');
+                            return false;
+                        }
+                    }
+
+                    if (step === 2) {
+                        if (!form.land_area || form.land_area <= 0) {
+                            showToast('Mohon isi Luas Tanah yang valid', 'error');
+                            return false;
+                        }
+                        if (form.property_type === 'Bangunan') {
+                            if (!form.building_area || form.building_area <= 0) {
+                                showToast('Mohon isi Luas Bangunan yang valid', 'error');
+                                return false;
+                            }
+                            if (form.bedrooms === null || form.bedrooms < 0) {
+                                showToast('Mohon isi jumlah Kamar Tidur', 'error');
+                                return false;
+                            }
+                            if (form.bathrooms === null || form.bathrooms < 0) {
+                                showToast('Mohon isi jumlah Kamar Mandi', 'error');
+                                return false;
+                            }
+                            if (!form.floors || form.floors < 1) {
+                                showToast('Mohon isi jumlah Lantai', 'error');
+                                return false;
+                            }
+                            if (!form.carport_garage) {
+                                showToast('Mohon pilih Carport/Garasi Mobil', 'error');
+                                return false;
+                            }
+                            if (!form.furnishing) {
+                                showToast('Mohon pilih Kondisi Perabot', 'error');
+                                return false;
+                            }
+                            if (!form.electricity || !form.electricity.trim()) {
+                                showToast('Mohon isi Daya Listrik', 'error');
+                                return false;
+                            }
+                            if (!form.water_source || !form.water_source.trim()) {
+                                showToast('Mohon isi Sumber Air', 'error');
+                                return false;
+                            }
+                            if (!form.certificate) {
+                                showToast('Mohon pilih Legalitas', 'error');
+                                return false;
+                            }
+                            if (!form.facing_direction) {
+                                showToast('Mohon pilih Hadap Bangunan', 'error');
+                                return false;
+                            }
+                        } else {
+                            if (!form.land_width || form.land_width <= 0) {
+                                showToast('Mohon isi Lebar Muka', 'error');
+                                return false;
+                            }
+                            if (!form.land_shape) {
+                                showToast('Mohon pilih Bentuk Tanah', 'error');
+                                return false;
+                            }
+                            if (!form.land_condition) {
+                                showToast('Mohon pilih Kontur Tanah', 'error');
+                                return false;
+                            }
+                            if (!form.road_access) {
+                                showToast('Mohon pilih Akses Jalan Utama', 'error');
+                                return false;
+                            }
+                            if (!form.certificate) {
+                                showToast('Mohon pilih Legalitas', 'error');
+                                return false;
+                            }
+                            if (!form.facing_direction) {
+                                showToast('Mohon pilih Hadap Tanah', 'error');
+                                return false;
+                            }
+                        }
+                    }
+
+                    if (step === 3) {
+                        if (!form.address || !form.address.trim()) {
+                            errors.address = 'Alamat lokasi properti wajib diisi';
+                            showToast('Mohon isi alamat lokasi properti', 'error');
+                            return false;
+                        }
+                    }
+
+                    if (step === 4) {
+                        if (!form.road_access_types || form.road_access_types.length === 0) {
+                            showToast('Mohon pilih minimal 1 Akses Jalan Properti', 'error');
+                            return false;
+                        }
+                    }
+
+                    if (step === 5) {
+                        if (!form.price || form.price <= 0) {
+                            errors.price = 'Masukkan harga penawaran yang valid';
+                            showToast('Mohon isi harga penawaran', 'error');
+                            return false;
+                        }
+                        if (!form.commission_fee || form.commission_fee < 2.5) {
+                            errors.commission_fee = 'Komisi fee jika terjual melalui GDP minimal 2,5%';
+                            showToast('Komisi fee jika terjual melalui GDP minimal 2,5%', 'error');
+                            return false;
+                        }
+                    }
+
+                    return true;
+                };
+
+                const nextStep = () => {
+                    if (validateStep(currentStep.value)) {
+                        if (currentStep.value < totalSteps) {
+                            currentStep.value++;
+                        }
+                    }
+                };
+
+                const prevStep = () => {
+                    if (currentStep.value > 0) {
+                        currentStep.value--;
+                    }
+                };
+
+                const addAccessItem = (catIndex) => {
+                    accessCategories.value[catIndex].items.push({ name: '', minutes: null });
+                };
+
+                const removeAccessItem = (catIndex, itemIndex) => {
+                    if (accessCategories.value[catIndex].items.length > 1) {
+                        accessCategories.value[catIndex].items.splice(itemIndex, 1);
+                    }
+                };
+
+                const toggleTransactionType = (type) => {
+                    const idx = form.transaction_types.indexOf(type);
+                    if (idx > -1) {
+                        if (form.transaction_types.length > 1) {
+                            form.transaction_types.splice(idx, 1);
+                        } else {
+                            showToast('Pilih setidaknya satu jenis transaksi', 'error');
+                        }
+                    } else {
+                        form.transaction_types.push(type);
+                    }
+                };
+
+                const onPriceInput = (event) => {
+                    const rawValue = event.target.value.replace(/\D/g, '');
+                    form.price = rawValue ? parseInt(rawValue, 10) : 0;
+                };
+
+                const formattedPrice = computed(() => {
+                    if (!form.price) return '';
+                    return new Intl.NumberFormat('id-ID').format(form.price);
+                });
+
+                const whatsappConfirmUrl = computed(() => {
+                    const name = form.customer_name ? form.customer_name.trim() : 'Customer';
+                    const subId = lastSubmissionId.value || 'GDP-PROPERTI';
+                    const propTitle = form.property_title ? form.property_title.trim() : (form.property_subcategory || form.property_type);
+                    const msg = `Halo Tim Guntur Dagang Property, saya *${name}* sudah selesai mengisi Form Brief Video Properti (*${propTitle}*) dengan ID Pengajuan: *${subId}*. Mohon bantuan untuk diproses ya, terima kasih!`;
+                    return `https://wa.me/?text=${encodeURIComponent(msg)}`;
+                });
+
+                const priceInWords = computed(() => {
+                    if (!form.price) return '';
+                    const p = form.price;
+                    if (p >= 1000000000) {
+                        return (p / 1000000000).toLocaleString('id-ID', { maximumFractionDigits: 2 }) + ' Miliar Rupiah';
+                    } else if (p >= 1000000) {
+                        return (p / 1000000).toLocaleString('id-ID', { maximumFractionDigits: 2 }) + ' Juta Rupiah';
+                    } else if (p >= 1000) {
+                        return (p / 1000).toLocaleString('id-ID', { maximumFractionDigits: 2 }) + ' Ribu Rupiah';
+                    }
+                    return p + ' Rupiah';
+                });
+
+                const formatRupiahDisplay = (num) => {
+                    if (!num) return '0';
+                    return new Intl.NumberFormat('id-ID').format(num);
+                };
+
+                const printBriefPDF = () => {
+                    window.print();
+                };
+
+                const submitBrief = () => {
+                    if (!formConsent.value) {
+                        showToast('Harap centang persetujuan MOU terlebih dahulu', 'error');
+                        return;
+                    }
+                    isSubmitting.value = true;
+                    setTimeout(() => {
+                        isSubmitting.value = false;
+                        lastSubmissionId.value = 'GDP-' + Math.floor(100000 + Math.random() * 900000);
+                        currentStep.value = 8;
+                        showToast('Formulir berhasil dikirim!', 'info');
+                    }, 1000);
+                };
+
+                const resetForm = () => {
+                    form.customer_name = '';
+                    form.whatsapp = '';
+                    form.is_owner_name = 'Atas Nama Saya';
+                    form.owner_name = '';
+                    form.owner_status = 'Masih Hidup';
+                    form.property_type = 'Bangunan';
+                    form.property_subcategory = 'Rumah';
+                    form.property_title = '';
+                    form.land_area = null;
+                    form.building_area = null;
+                    form.bedrooms = null;
+                    form.bathrooms = null;
+                    form.floors = null;
+                    form.carport_garage = '1';
+                    form.custom_carport = '';
+                    form.furnishing = 'Unfurnished';
+                    form.facilities = '';
+                    form.electricity = '';
+                    form.water_source = '';
+                    form.land_width = null;
+                    form.land_shape = '';
+                    form.land_condition = '';
+                    form.road_access = '';
+                    form.zoning = '';
+                    form.certificate = '';
+                    form.facing_direction = '';
+                    form.address = '';
+                    form.maps_url = '';
+                    form.selling_point_1 = '';
+                    form.selling_point_2 = '';
+                    form.selling_point_3 = '';
+                    form.road_access_types = [];
+                    form.development_potential = [];
+                    form.transaction_types = ['Jual'];
+                    form.price = 0;
+                    form.commission_fee = 2.5;
+                    form.price_unit = 'Harga Total';
+                    form.payment_scheme = 'Cash';
+                    form.price_notes = '';
+                    formConsent.value = false;
+                    currentStep.value = 0;
+                };
+
+                return {
+                    currentStep,
+                    totalSteps,
+                    isSubmitting,
+                    formConsent,
+                    lastSubmissionId,
+                    whatsappConfirmUrl,
+                    toast,
+                    errors,
+                    form,
+                    facingDirections,
+                    roadAccessOptions,
+                    landPotentials,
+                    accessCategories,
+                    getStepTitle,
+                    selectPropertyType,
+                    startBrief,
+                    nextStep,
+                    prevStep,
+                    addAccessItem,
+                    removeAccessItem,
+                    toggleTransactionType,
+                    onPriceInput,
+                    formattedPrice,
+                    priceInWords,
+                    formatRupiahDisplay,
+                    printBriefPDF,
+                    submitBrief,
+                    resetForm,
+                    showToast
+                };
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>
